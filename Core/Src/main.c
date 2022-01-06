@@ -65,7 +65,7 @@ static void MX_SPI1_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	LCD_Init(&hspi1);
+  LCD_begin(&hspi1, GPIOA, LCD_DC_Pin, LCD_CS_Pin, LCD_RESET_Pin, 40, 0x04);
 
   /* USER CODE END 1 */
 
