@@ -7,6 +7,8 @@
 
 #include "main.h"
 
+static uint8_t pcd8544_buffer[LCDWIDTH * LCDHEIGHT / 8] = {0};
+
 #define max(a, b)                                                              \
   ({                                                                           \
     __typeof__(a) _a = (a);                                                    \
@@ -49,11 +51,16 @@ static void command(uint8_t command) {
   HAL_SPI_Transmit(_hspi, &command, 1, 0);
 }
 
-void updateBoundingBox(uint8_t xmin, uint8_t ymin, uint8_t xmax, uint8_t ymax) {
+static void updateBoundingBox(uint8_t xmin, uint8_t ymin, uint8_t xmax, uint8_t ymax) {
   xUpdateMin = min(xUpdateMin, xmin);
   xUpdateMax = max(xUpdateMax, xmax);
   yUpdateMin = min(yUpdateMin, ymin);
   yUpdateMax = max(yUpdateMax, ymax);
+}
+
+static void data(uint8_t c) {
+  HAL_GPIO_WritePin(_port, _dcPin, GPIO_PIN_SET);
+  HAL_SPI_Transmit(_hspi, &c, 1, 0);
 }
 /*****************************************************************************/
 
@@ -92,11 +99,7 @@ void LCD_begin(SPI_HandleTypeDef *hspi, GPIO_TypeDef *port, uint16_t dcPin,
   _dcPin = dcPin;
   _csPin = csPin;
   _resetPin = resetPin;
-
   _hspi = hspi;
-
-  LCD_setBias(bias);
-  LCD_setContrast(contrast);
 
   LCD_initDisplay();
 
@@ -105,20 +108,54 @@ void LCD_begin(SPI_HandleTypeDef *hspi, GPIO_TypeDef *port, uint16_t dcPin,
   LCD_display();
 }
 
-void LCD_setBias(uint8_t bias) {
-  uint8_t val = bias & 0x07;
-  _bias = bias;
-  command(PCD8544_FUNCTIONSET | PCD8544_EXTINSTRUCTION); // extended instr. mode
-  command(PCD8544_SETBIAS | val);                        // set bias
-  command(PCD8544_FUNCTIONSET);                          // basic instr. mode
+void LCD_clearDisplay() {
+  memset(pcd8544_buffer, 0, LCDWIDTH * LCDHEIGHT / 8);
+  updateBoundingBox(0, 0, LCDWIDTH - 1, LCDHEIGHT - 1);
 }
 
-void LCD_setContrast(uint8_t contrast) {
-  uint8_t val = contrast & 0x7F;
-  _contrast = contrast;
-  command(PCD8544_FUNCTIONSET | PCD8544_EXTINSTRUCTION); // extended instr. mode
-  command(PCD8544_SETVOP | val);                         // set Vop (contrast)
-  command(PCD8544_FUNCTIONSET);                          // basic instr. mode
+void LCD_display() {
+  if (_reinit_interval) {
+    _display_count++;
+    if (_display_count >= _reinit_interval) {
+      _display_count = 0;
+      LCD_initDisplay();
+    }
+  }
+
+  for (uint8_t page = (yUpdateMin / 8); page < (yUpdateMax / 8) + 1; page++) {
+    command(PCD8544_SETYADDR | page);
+
+    uint8_t startcol = xUpdateMin;
+    uint8_t endcol = xUpdateMax;
+
+    command(PCD8544_SETXADDR | startcol);
+
+    HAL_GPIO_WritePin(_port, _dcPin, GPIO_PIN_SET);
+    // Update only part of display (if applicable)
+    HAL_SPI_Transmit(
+      _hspi,
+	  pcd8544_buffer + (LCDWIDTH * page) + startcol,
+	  endcol - startcol + 1,
+	  0
+	);
+
+    command(PCD8544_SETYADDR);
+
+    // Ensure display won't be written again until bounding box is updated
+    xUpdateMin = LCDWIDTH - 1;
+    xUpdateMax = 0;
+    yUpdateMin = LCDHEIGHT - 1;
+    yUpdateMax = 0;
+  }
+}
+
+void LCD_drawPixel(int16_t x, int16_t y, bool color) {
+  // TODO: assert not out of bounds?
+  updateBoundingBox(x, y, x, y);
+  if (color)
+    pcd8544_buffer[x + (y / 8) * LCDWIDTH] |= 1 << (y % 8);
+  else
+    pcd8544_buffer[x + (y / 8) * LCDWIDTH] &= ~(1 << (y % 8));
 }
 
 /**
@@ -142,26 +179,25 @@ void LCD_initDisplay() {
     HAL_GPIO_WritePin(_port, _resetPin, GPIO_PIN_SET);   // set high
   }
 
-  command(
-      PCD8544_FUNCTIONSET); // chip active, horiz. addressing, basic command set
+  LCD_setBias(_bias);
+  LCD_setContrast(_contrast);
+
+  command(PCD8544_FUNCTIONSET); // active, horiz. addressing, basic command set
   command(PCD8544_DISPLAYCONTROL | PCD8544_DISPLAYNORMAL); // display normal
 }
 
-void LCD_display() {
-  if (_reinit_interval) {
-    _display_count++;
-    if (_display_count >= _reinit_interval) {
-      _display_count = 0;
-      LCD_initDisplay();
-    }
-  }
+void LCD_setBias(uint8_t bias) {
+  uint8_t val = bias & 0x07;
+  _bias = bias;
+  command(PCD8544_FUNCTIONSET | PCD8544_EXTINSTRUCTION); // extended instr. mode
+  command(PCD8544_SETBIAS | val);                        // set bias
+  command(PCD8544_FUNCTIONSET);                          // basic instr. mode
+}
 
-  for (uint8_t page = (yUpdateMin / 8); page < (yUpdateMax / 8) + 1; page++) {
-    command(PCD8544_SETYADDR | page);
-
-    uint8_t startcol = xUpdateMin;
-    uint8_t endcol = xUpdateMax;
-
-    command(PCD8544_SETXADDR | startcol);
-  }
+void LCD_setContrast(uint8_t contrast) {
+  uint8_t val = contrast & 0x7F;
+  _contrast = contrast;
+  command(PCD8544_FUNCTIONSET | PCD8544_EXTINSTRUCTION); // extended instr. mode
+  command(PCD8544_SETVOP | val);                         // set Vop (contrast)
+  command(PCD8544_FUNCTIONSET);                          // basic instr. mode
 }

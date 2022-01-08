@@ -2,7 +2,7 @@
  * pcd8544.h
  *
  *  Created on: Jan 2, 2022
- *      Author: Adafruit
+ *      Author: Adafruit (modified by Christopher Wilson <chris@sencjw.com>)
  */
 
 #ifndef INC_PCD8544_H_
@@ -57,12 +57,14 @@
 #define PCD8544_SETBIAS			0x10
 #define PCD8544_SETVOP			0x80
 
-void LCD_initDisplay();
 void LCD_begin(SPI_HandleTypeDef *, GPIO_TypeDef *, uint16_t,
                uint16_t, uint16_t, uint8_t,
                uint8_t);
+void LCD_clearDisplay();
+void LCD_display();
+void LCD_drawPixel(uint8_t, uint8_t, bool);
+void LCD_initDisplay();
 void LCD_setBias(uint8_t);
 void LCD_setContrast(uint8_t);
-void LCD_display();
 
 #endif /* INC_PCD8544_H_ */
