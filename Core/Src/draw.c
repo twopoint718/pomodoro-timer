@@ -1,7 +1,4 @@
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include "gfx.h"
+#include "main.h"
 
 // Adafruit implementation
 void draw_circle_af(int x0, int y0, int r) {
@@ -12,10 +9,10 @@ void draw_circle_af(int x0, int y0, int r) {
     int y = r;
 
     // filling in 4 quadrants at once, all symmetric
-    set_pixel(x0, y0 - r);  // N
-    set_pixel(x0 - r, y0);  // W
-    set_pixel(x0, y0 + r);  // S
-    set_pixel(x0 + r, y0);  // E
+    LCD_drawPixel(x0, y0 - r, 1);  // N
+    LCD_drawPixel(x0 - r, y0, 1);  // W
+    LCD_drawPixel(x0, y0 + r, 1);  // S
+    LCD_drawPixel(x0 + r, y0, 1);  // E
 
     while (x < y) {
         if (f >= 0) {
@@ -28,14 +25,14 @@ void draw_circle_af(int x0, int y0, int r) {
         f += ddF_x;
 
         // in CCW order
-        set_pixel(x0 - x, y0 - y);  // NNW
-        set_pixel(x0 - y, y0 - x);  // WNW
-        set_pixel(x0 - y, y0 + x);  // WSW
-        set_pixel(x0 - x, y0 + y);  // SSW
-        set_pixel(x0 + x, y0 + y);  // SSE
-        set_pixel(x0 + y, y0 + x);  // ESE
-        set_pixel(x0 + y, y0 - x);  // ENE
-        set_pixel(x0 + x, y0 - y);  // NNE
+        LCD_drawPixel(x0 - x, y0 - y, 1);  // NNW
+        LCD_drawPixel(x0 - y, y0 - x, 1);  // WNW
+        LCD_drawPixel(x0 - y, y0 + x, 1);  // WSW
+        LCD_drawPixel(x0 - x, y0 + y, 1);  // SSW
+        LCD_drawPixel(x0 + x, y0 + y, 1);  // SSE
+        LCD_drawPixel(x0 + y, y0 + x, 1);  // ESE
+        LCD_drawPixel(x0 + y, y0 - x, 1);  // ENE
+        LCD_drawPixel(x0 + x, y0 - y, 1);  // NNE
     }
 }
 
@@ -45,15 +42,15 @@ void draw_circle(unsigned int x, unsigned int y, unsigned int r) {
     int yi = r;
 
     while (xi <= yi) {
-        set_pixel(xi + x, yi + y);
-        set_pixel(x - xi, yi + y);
-        set_pixel(xi + x, y - yi);
-        set_pixel(x - xi, y - yi);
+        LCD_drawPixel(xi + x, yi + y, 1);
+        LCD_drawPixel(x - xi, yi + y, 1);
+        LCD_drawPixel(xi + x, y - yi, 1);
+        LCD_drawPixel(x - xi, y - yi, 1);
 
-        set_pixel(yi + x, xi + y);
-        set_pixel(x - yi, y + xi);
-        set_pixel(x + yi, y - xi);
-        set_pixel(x - yi, y - xi);
+        LCD_drawPixel(yi + x, xi + y, 1);
+        LCD_drawPixel(x - yi, y + xi, 1);
+        LCD_drawPixel(x + yi, y - xi, 1);
+        LCD_drawPixel(x - yi, y - xi, 1);
         if (di <= 0) {
             di = di + 4 * xi + 6;           // see derivation [1]
             xi = xi + 1;
@@ -94,9 +91,9 @@ void draw_line(int x0, int y0, int x1, int y1) {
 
     for (; x0 <= x1; x0++) {
         if (steep) {
-            set_pixel(y0, x0);
+            LCD_drawPixel(y0, x0, 1);
         } else {
-            set_pixel(x0, y0);
+            LCD_drawPixel(x0, y0, 1);
         }
         err -= dy;
         if (err < 0) {
@@ -105,12 +102,3 @@ void draw_line(int x0, int y0, int x1, int y1) {
         }
     }
 }
-
-void draw_render(const char *filename) {
-    gfx_render(filename);
-}
-
-/*
- * Derivation of equations for decision parameter `di`:
- * TODO
- */

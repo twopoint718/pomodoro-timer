@@ -58,10 +58,6 @@ static void updateBoundingBox(uint8_t xmin, uint8_t ymin, uint8_t xmax, uint8_t 
   yUpdateMax = max(yUpdateMax, ymax);
 }
 
-static void data(uint8_t c) {
-  HAL_GPIO_WritePin(_port, _dcPin, GPIO_PIN_SET);
-  HAL_SPI_Transmit(_hspi, &c, 1, 0);
-}
 /*****************************************************************************/
 
 /**

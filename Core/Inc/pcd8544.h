@@ -62,7 +62,7 @@ void LCD_begin(SPI_HandleTypeDef *, GPIO_TypeDef *, uint16_t,
                uint8_t);
 void LCD_clearDisplay();
 void LCD_display();
-void LCD_drawPixel(uint8_t, uint8_t, bool);
+void LCD_drawPixel(int16_t, int16_t, bool);
 void LCD_initDisplay();
 void LCD_setBias(uint8_t);
 void LCD_setContrast(uint8_t);

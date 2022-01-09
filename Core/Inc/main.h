@@ -31,9 +31,11 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "pcd8544.h"
 #include <string.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include "pcd8544.h"
+#include "draw.h"
 
 /* USER CODE END Includes */
 
