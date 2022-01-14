@@ -180,6 +180,11 @@ void LCD_initDisplay() {
   command(PCD8544_DISPLAYCONTROL | PCD8544_DISPLAYNORMAL); // display normal
 }
 
+void LCD_invertDisplay() {
+  command(PCD8544_FUNCTIONSET);
+  command(PCD8544_DISPLAYCONTROL | PCD8544_DISPLAYINVERTED);
+}
+
 void LCD_setBias(uint8_t bias) {
   uint8_t val = bias & 0x07;
   _bias = bias;

@@ -64,6 +64,7 @@ void LCD_clearDisplay();
 void LCD_display();
 void LCD_drawPixel(int16_t, int16_t, bool);
 void LCD_initDisplay();
+void LCD_invertDisplay();
 void LCD_setBias(uint8_t);
 void LCD_setContrast(uint8_t);
 
