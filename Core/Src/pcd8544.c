@@ -32,7 +32,6 @@ static uint8_t _display_count;
 
 // Pins
 static uint16_t _dcPin;
-static uint16_t _csPin;
 static uint16_t _resetPin;
 
 static SPI_HandleTypeDef *_hspi;
@@ -79,7 +78,7 @@ static void updateBoundingBox(uint8_t xmin, uint8_t ymin, uint8_t xmax, uint8_t 
  * @retval None
  */
 void LCD_begin(SPI_HandleTypeDef *hspi, GPIO_TypeDef *port, uint16_t dcPin,
-               uint16_t csPin, uint16_t resetPin, uint8_t contrast,
+               uint16_t resetPin, uint8_t contrast,
                uint8_t bias) {
   assert_param(HAL_SPI_GetState(hspi) == HAL_SPI_STATE_READY);
   // TODO: ensure DC & RST are configured as outputs
@@ -93,7 +92,6 @@ void LCD_begin(SPI_HandleTypeDef *hspi, GPIO_TypeDef *port, uint16_t dcPin,
 
   _port = port;
   _dcPin = dcPin;
-  _csPin = csPin;
   _resetPin = resetPin;
   _hspi = hspi;
 

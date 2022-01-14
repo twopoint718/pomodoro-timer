@@ -64,9 +64,7 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define LCD_RESET_Pin GPIO_PIN_2
 #define LCD_RESET_GPIO_Port GPIOA
-#define LCD_CS_Pin GPIO_PIN_3
-#define LCD_CS_GPIO_Port GPIOA
-#define LCD_DC_Pin GPIO_PIN_15
+#define LCD_DC_Pin GPIO_PIN_3
 #define LCD_DC_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 

@@ -58,7 +58,7 @@
 #define PCD8544_SETVOP			0x80
 
 void LCD_begin(SPI_HandleTypeDef *, GPIO_TypeDef *, uint16_t,
-               uint16_t, uint16_t, uint8_t,
+               uint16_t, uint8_t,
                uint8_t);
 void LCD_clearDisplay();
 void LCD_display();
