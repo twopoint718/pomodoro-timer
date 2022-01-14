@@ -132,15 +132,16 @@ void LCD_display() {
 	  endcol - startcol + 1,
 	  0
 	);
-
-    command(PCD8544_SETYADDR);
-
-    // Ensure display won't be written again until bounding box is updated
-    xUpdateMin = LCDWIDTH - 1;
-    xUpdateMax = 0;
-    yUpdateMin = LCDHEIGHT - 1;
-    yUpdateMax = 0;
   }
+
+  command(PCD8544_SETYADDR); // no idea why this is necessary but it is to
+                             // finish the last byte?
+
+  // Ensure display won't be written again until bounding box is updated
+  xUpdateMin = LCDWIDTH - 1;
+  xUpdateMax = 0;
+  yUpdateMin = LCDHEIGHT - 1;
+  yUpdateMax = 0;
 }
 
 void LCD_drawPixel(int16_t x, int16_t y, bool color) {
