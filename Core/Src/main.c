@@ -88,8 +88,8 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
   LCD_begin(&hspi1, GPIOA, LCD_DC_Pin, LCD_RESET_Pin, 40, 0x04);
-  draw_circle(LCDWIDTH/2, LCDHEIGHT/2, LCDHEIGHT/2 - 1);
-  LCD_drawPixel(LCDWIDTH/2, LCDHEIGHT/2, 1);
+  // draw_circle(LCDWIDTH/2, LCDHEIGHT/2, LCDHEIGHT/2 - 1);
+  LCD_invertDisplay();
   LCD_display();
 
   /* USER CODE END 2 */

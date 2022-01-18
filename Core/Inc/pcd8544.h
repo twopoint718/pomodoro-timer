@@ -21,7 +21,7 @@
  * |                 |    0 | 0x20 OR 0x04         | power down                   |
  * |                 |    0 | 0x20 OR 0x02         | vertical addressing          |
  * |                 |    0 | 0x20 OR 0x01         | use extended instruction set |
- * | Write data      |    1 | 0x00..0xFF           | write data to RAM            |
+ * | Write data      |    1 | 0x00..0xFF           | write data to RAM (addr++)   |
  * | Display control |    0 | 0x08 OR 0x00         | Display blank                |
  * |                 |    0 | 0x08 OR 0x04         | Normal mode                  |
  * |                 |    0 | 0x08 OR 0x01         | All display segments on      |
