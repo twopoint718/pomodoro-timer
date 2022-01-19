@@ -79,10 +79,8 @@ void LCD_begin(SPI_HandleTypeDef *hspi, GPIO_TypeDef *port, uint16_t dcPin,
 }
 
 void LCD_clearDisplay() {
-  memset(pcd8544_buffer, 0, LCDWIDTH * LCDHEIGHT / 8);
+  memset(pcd8544_buffer, 0, buffsize);
 }
-
-
 
 /**
  * For simplicity, set the whole display in one go. LCD_drawPixel takes care of
