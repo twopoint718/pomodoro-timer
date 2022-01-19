@@ -8,6 +8,7 @@
 #include "main.h"
 
 static uint8_t pcd8544_buffer[LCDWIDTH * LCDHEIGHT / 8] = {0};
+static uint16_t buffsize = sizeof(pcd8544_buffer);
 
 #define max(a, b)                                                              \
   ({                                                                           \
@@ -35,12 +36,6 @@ static uint16_t _dcPin;
 static uint16_t _resetPin;
 
 static SPI_HandleTypeDef *_hspi;
-
-// Geometry of the display
-static uint8_t xUpdateMin = 0;
-static uint8_t xUpdateMax = LCDWIDTH - 1;
-static uint8_t yUpdateMin = 0;
-static uint8_t yUpdateMax = LCDHEIGHT - 1;
 
 /******************************************************************************
  * PRIVATE FUNCTIONS
@@ -91,24 +86,20 @@ void LCD_clearDisplay() {
   memset(pcd8544_buffer, 0, LCDWIDTH * LCDHEIGHT / 8);
 }
 
+
+
+/**
+ * For simplicity, set the whole display in one go. LCD_drawPixel takes care of
+ * transforming the pixel coordinates so that they will be in the correct
+ * orientation in the buffer (LSB is the top (zeroth) row, MSB is 7th row).
+ * X coordinates proceed across and Y down.
+ */
 void LCD_display() {
-  for (uint8_t page = (yUpdateMin / 8); page < (yUpdateMax / 8) + 1; page++) {
-    command(PCD8544_SETYADDR | page);
+  command(PCD8544_SETYADDR);	// set to y = 0
+  command(PCD8544_SETXADDR);	// set to x = 0
 
-    uint8_t startcol = xUpdateMin;
-    uint8_t endcol = xUpdateMax;
-
-    command(PCD8544_SETXADDR | startcol);
-
-    HAL_GPIO_WritePin(_port, _dcPin, GPIO_PIN_SET);
-    // Update only part of display (if applicable)
-    HAL_SPI_Transmit(
-      _hspi,
-	  pcd8544_buffer + (LCDWIDTH * page) + startcol,
-	  endcol - startcol + 1,
-	  0
-	);
-  }
+  HAL_GPIO_WritePin(_port, _dcPin, GPIO_PIN_SET);
+  HAL_SPI_Transmit(_hspi, pcd8544_buffer, buffsize, 0);
 
   command(PCD8544_SETYADDR); // no idea why this is necessary but it is to
                              // finish the last byte?
