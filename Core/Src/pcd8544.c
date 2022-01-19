@@ -48,17 +48,14 @@ static void command(uint8_t command) {
 /*****************************************************************************/
 
 /**
- * @brief Create and initialize the LCD module. All D/C, CS, and Reset pins must
+ * @brief Create and initialize the LCD module. Both D/C and Reset pins must
  * be on the same port. Call this function first!
  * @param hspi an already initialize SPI struct
  * @param port a pointer to the GPIO port struct where all the remaining GPIO
- * pins are: D/C, CS, and Reset
+ * pins are: D/C and Reset
  * @param dcPin the Data/~Command pin, when low it means we're sending commands
  * to the LCD. When the pin is high we're setting a byte in RAM at the current
  * address
- * @param csPin chip select (or ~SCE) when high, the LCD ignores clock pulses. A
- * negative edge on this pin enables the serial interface and indicates the
- * start of a data transmission
  * @param resetPin a reset (~RES) pulse (negative low) is used to initialize the
  * LCD
  * @param contrast set the contrast of the display
@@ -79,7 +76,6 @@ void LCD_begin(SPI_HandleTypeDef *hspi, GPIO_TypeDef *port, uint16_t dcPin,
   _hspi = hspi;
 
   LCD_initDisplay();
-  LCD_display();
 }
 
 void LCD_clearDisplay() {
