@@ -42,7 +42,7 @@ static SPI_HandleTypeDef *_hspi;
  *****************************************************************************/
 static void command(uint8_t command) {
   HAL_GPIO_WritePin(_port, _dcPin, GPIO_PIN_RESET);
-  HAL_SPI_Transmit(_hspi, &command, 1, 0);
+  HAL_SPI_Transmit(_hspi, &command, 1, 0); // timeout isn't checked for 1 byte
 }
 
 /*****************************************************************************/
@@ -93,7 +93,7 @@ void LCD_display() {
   command(PCD8544_SETXADDR);	// set to x = 0
 
   HAL_GPIO_WritePin(_port, _dcPin, GPIO_PIN_SET);
-  HAL_SPI_Transmit(_hspi, pcd8544_buffer, buffsize, 0);
+  HAL_SPI_Transmit(_hspi, pcd8544_buffer, buffsize, HAL_MAX_DELAY); // TODO: delay
 
   command(PCD8544_SETYADDR); // no idea why this is necessary but it is to
                              // finish the last byte?
