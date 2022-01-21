@@ -42,7 +42,7 @@ static SPI_HandleTypeDef *_hspi;
  *****************************************************************************/
 static void command(uint8_t command) {
   HAL_GPIO_WritePin(_port, _dcPin, GPIO_PIN_RESET);
-  HAL_SPI_Transmit(_hspi, &command, 1, 0); // timeout isn't checked for 1 byte
+  HAL_SPI_Transmit(_hspi, &command, 1, HAL_MAX_DELAY);
 }
 
 /*****************************************************************************/

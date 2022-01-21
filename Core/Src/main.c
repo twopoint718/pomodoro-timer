@@ -88,20 +88,17 @@ int main(void) {
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
   LCD_begin(&hspi1, GPIOA, LCD_DC_Pin, LCD_RESET_Pin, 40, 0x04);
+  draw_circle(LCDWIDTH/2, LCDHEIGHT/2, LCDHEIGHT/2);
+  LCD_display();
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  bool display = 1;
   while (1) {
-    LCD_drawPixel(0, 0, 1);
-    LCD_display();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_Delay(100);
-    display ^= 1;
   }
   /* USER CODE END 3 */
 }
