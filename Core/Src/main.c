@@ -20,6 +20,7 @@
 #include "main.h"
 #include "gpio.h"
 #include "spi.h"
+#include "lsm6dsl.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
