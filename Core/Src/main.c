@@ -20,7 +20,7 @@
 #include "main.h"
 #include "gpio.h"
 #include "spi.h"
-#include "lsm6dsl.h"
+#include "stm32l475e_iot01_accelero.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
