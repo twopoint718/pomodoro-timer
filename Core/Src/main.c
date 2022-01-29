@@ -20,6 +20,7 @@
 #include "main.h"
 #include "i2c.h"
 #include "spi.h"
+#include "usart.h"
 #include "usb_device.h"
 #include "gpio.h"
 
@@ -67,6 +68,7 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+  BSP_ACCELERO_Init();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -89,9 +91,9 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI1_Init();
   MX_I2C2_Init();
+  MX_UART4_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
-  BSP_ACCELERO_Init();
   LCD_begin(&hspi1, GPIOA, LCD_DC_Pin, LCD_RESET_Pin, 40, 0x04);
   draw_circle(LCDWIDTH/2, LCDHEIGHT/2, LCDHEIGHT/2);
   LCD_display();
