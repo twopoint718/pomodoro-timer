@@ -27,7 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stm32l475e_iot01_accelero.h"
-#include "usbd_cdc.h"
+#include "usbd_cdc_if.h"
 
 /* USER CODE END Includes */
 
@@ -104,13 +104,10 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   uint8_t buff[14] = "Hello, world!";
-  USBD_CDC_SetTxBuffer(&USBD_CDC, buff, 14);
-  uint8_t status = USBD_CDC_TransmitPacket(&USBD_CDC);
-  if (status == USBD_FAIL) {
-    int x = 0;
-  }
 
   while (1) {
+    CDC_Transmit_FS(buff, 14);	// send "Hello, world!" once per second
+    HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
