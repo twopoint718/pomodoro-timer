@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stm32l475e_iot01_accelero.h"
+#include "usbd_cdc.h"
 
 /* USER CODE END Includes */
 
@@ -47,7 +48,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+extern USBD_HandleTypeDef USBD_CDC;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -68,7 +69,6 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  BSP_ACCELERO_Init();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -84,7 +84,6 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -94,6 +93,8 @@ int main(void)
   MX_UART4_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
+  BSP_ACCELERO_Init();
+
   LCD_begin(&hspi1, GPIOA, LCD_DC_Pin, LCD_RESET_Pin, 40, 0x04);
   draw_circle(LCDWIDTH/2, LCDHEIGHT/2, LCDHEIGHT/2);
   LCD_display();
@@ -102,6 +103,13 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint8_t buff[14] = "Hello, world!";
+  USBD_CDC_SetTxBuffer(&USBD_CDC, buff, 14);
+  uint8_t status = USBD_CDC_TransmitPacket(&USBD_CDC);
+  if (status == USBD_FAIL) {
+    int x = 0;
+  }
+
   while (1) {
     /* USER CODE END WHILE */
 
