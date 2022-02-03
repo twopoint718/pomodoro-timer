@@ -48,7 +48,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-extern USBD_HandleTypeDef USBD_CDC;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -96,7 +96,7 @@ int main(void)
   BSP_ACCELERO_Init();
 
   LCD_begin(&hspi1, GPIOA, LCD_DC_Pin, LCD_RESET_Pin, 40, 0x04);
-  draw_circle(LCDWIDTH/2, LCDHEIGHT/2, LCDHEIGHT/2);
+  draw_circle_af(LCDWIDTH/2, LCDHEIGHT/2-1, LCDHEIGHT/2-1);
   LCD_display();
 
   /* USER CODE END 2 */
@@ -104,10 +104,10 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   uint8_t buff[14] = "Hello, world!";
-
   while (1) {
-    CDC_Transmit_FS(buff, 14);	// send "Hello, world!" once per second
-    HAL_Delay(1000);
+	  while (CDC_Transmit_FS(buff, sizeof(buff)) != USBD_OK) {
+		  HAL_Delay(1000);
+	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -177,6 +177,8 @@ void Error_Handler(void)
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
   while (1) {
+	  int x = 0;
+	  x++;
   }
   /* USER CODE END Error_Handler_Debug */
 }
