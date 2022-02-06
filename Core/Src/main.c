@@ -26,7 +26,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stm32l475e_iot01_accelero.h"
-#include "usbd_cdc_if.h"
 
 /* USER CODE END Includes */
 
@@ -101,11 +100,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint8_t buff[14] = "Hello, world!";
   while (1) {
-	  while (CDC_Transmit_FS(buff, sizeof(buff)) != USBD_OK) {
-		  HAL_Delay(1000);
-	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
