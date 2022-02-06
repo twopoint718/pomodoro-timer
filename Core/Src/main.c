@@ -21,7 +21,6 @@
 #include "i2c.h"
 #include "spi.h"
 #include "usart.h"
-#include "usb_device.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -91,7 +90,6 @@ int main(void)
   MX_SPI1_Init();
   MX_I2C2_Init();
   MX_UART4_Init();
-  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
   BSP_ACCELERO_Init();
 
