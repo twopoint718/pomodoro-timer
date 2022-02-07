@@ -100,7 +100,10 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint8_t data[] = "Hello world\r\n";
   while (1) {
+	  HAL_UART_Transmit(&huart4, data, sizeof(data), 500);
+	  HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
