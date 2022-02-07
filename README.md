@@ -19,4 +19,4 @@ I've either referenced, ported, or otherwise used these open source projects in 
 
 - [Adafruit GFX Library](https://github.com/Adafruit/Adafruit-GFX-Library) [BSD License](https://github.com/adafruit/Adafruit-GFX-Library/blob/master/license.txt)
 - [STMicroelectronics LSM6DSL accelerometer/gyro driver](https://github.com/STMicroelectronics/stm32-lsm6dsl) [BSD License](https://opensource.org/licenses/BSD-3-Clause)
-- [STMicroelectornics HAL code](https://www.st.com/resource/en/user_manual/um1884-description-of-stm32l4l4-hal-and-lowlayer-drivers-stmicroelectronics.pdf) (PDF)
+- [STMicroelectronics HAL code](https://www.st.com/resource/en/user_manual/um1884-description-of-stm32l4l4-hal-and-lowlayer-drivers-stmicroelectronics.pdf) (PDF)
