@@ -6,7 +6,6 @@ wall_thickness = 5; // ~3/16"
 side_height = 50.8 + wall_thickness; // 2" (from box bottom to lip)
 lid_clearance = 30;
 porthole_rad = 25.4;
-$fn = 75;
 
 /////////////////////////////////////////////////////////////////////
 // Derived
