@@ -126,31 +126,20 @@ void draw_line(int x0, int y0, int x1, int y1) {
     @param    size_y  Font magnification level in Y-axis, 1 is 'original' size
 */
 /**************************************************************************/
-void draw_char_af(int16_t x, int16_t y, unsigned char c, uint16_t color,
-                  uint16_t bg, uint8_t size_x, uint8_t size_y) {
-  if ((x >= _width) ||              // Clip right
-      (y >= _height) ||             // Clip bottom
-      ((x + 6 * size_x - 1) < 0) || // Clip left
-      ((y + 8 * size_y - 1) < 0))   // Clip top
+void draw_char_af(int16_t x, int16_t y, unsigned char c, uint16_t color) {
+  if ((x >= _width) ||  // Clip right
+      (y >= _height) || // Clip bottom
+      (x < 0) ||        // Clip left
+      (y < 0))          // Clip top
     return;
 
-  if (!_cp437 && (c >= 176))
-    c++; // Handle 'classic' charset behavior
-
-  startWrite();
   for (int8_t i = 0; i < 5; i++) { // Char bitmap = 5 columns
-    uint8_t line = pgm_read_byte(&font[c * 5 + i]);
+    uint8_t line = font[c * 5 + i];
     for (int8_t j = 0; j < 8; j++, line >>= 1) {
       if (line & 1) {
-        if (size_x == 1 && size_y == 1)
-          writePixel(x + i, y + j, color);
-        else
-          writeFillRect(x + i * size_x, y + j * size_y, size_x, size_y, color);
+        LCD_drawPixel(x + i, y + j, color);
       } else if (bg != color) {
-        if (size_x == 1 && size_y == 1)
-          writePixel(x + i, y + j, bg);
-        else
-          writeFillRect(x + i * size_x, y + j * size_y, size_x, size_y, bg);
+        LCD_drawPixel(x + i, y + j, bg);
       }
     }
   }
@@ -160,5 +149,4 @@ void draw_char_af(int16_t x, int16_t y, unsigned char c, uint16_t color,
     else
       writeFillRect(x + 5 * size_x, y, size_x, 8 * size_y, bg);
   }
-  endWrite();
 }
