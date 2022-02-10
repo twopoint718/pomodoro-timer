@@ -2,3 +2,4 @@ Debug
 *.launch
 docs
 *.FCStd
+.DS_Store
