@@ -35,7 +35,6 @@ extern "C" {
 #include <stdbool.h>
 #include <stdlib.h>
 #include "pcd8544.h"
-#include "draw.h"
 
 /* USER CODE END Includes */
 
