@@ -26,6 +26,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stm32l475e_iot01_accelero.h"
+#include "draw.h"
+#include "pcd8544.h"
 
 /* USER CODE END Includes */
 
@@ -172,9 +174,7 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
-  while (1) {
-	  int x = 0;
-	  x++;
+  while(1) {
   }
   /* USER CODE END Error_Handler_Debug */
 }

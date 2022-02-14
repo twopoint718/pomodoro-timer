@@ -8,6 +8,8 @@
 #ifndef INC_PCD8544_H_
 #define INC_PCD8544_H_
 
+#include "main.h"
+
 #define LCDWIDTH 84  // 84 pixels wide
 #define LCDHEIGHT 48 // 48 pixels high
 

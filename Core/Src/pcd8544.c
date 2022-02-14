@@ -5,7 +5,9 @@
  *      Author: cjw
  */
 
-#include "main.h"
+#include <stdint.h>
+#include "pcd8544.h"
+
 
 static uint8_t pcd8544_buffer[LCDWIDTH * LCDHEIGHT / 8] = {0};
 static uint16_t buffsize = sizeof(pcd8544_buffer);

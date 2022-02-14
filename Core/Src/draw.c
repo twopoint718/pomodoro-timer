@@ -1,5 +1,5 @@
 #include "glcdfont.c"
-#include "main.h"
+#include "pcd8544.h"
 
 // Adafruit implementation
 void draw_circle_af(int x0, int y0, int r) {
