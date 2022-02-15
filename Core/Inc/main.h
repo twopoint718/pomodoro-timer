@@ -39,6 +39,13 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+typedef enum _state {
+    START,
+    SHOW_STATS,
+    TIMING_POMODORO,
+    TIMING_SHORT_BREAK,
+    TIMING_LONG_BREAK
+} state_t;
 
 /* USER CODE END ET */
 
@@ -56,6 +63,19 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
+
+// TIMING
+// start_timer(...)
+// handle_times_up(...)
+
+// ORIENTATION
+// handle_orientation_change(...)
+
+// BUTTON
+// handle_reset_press(...)
+
+// STATS
+// stats_display(...)
 
 /* USER CODE END EFP */
 
