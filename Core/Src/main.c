@@ -95,7 +95,9 @@ int main(void)
   BSP_ACCELERO_Init();
 
   LCD_begin(&hspi1, GPIOA, LCD_DC_Pin, LCD_RESET_Pin, 40, 0x04);
-  draw_circle_af(LCDWIDTH/2, LCDHEIGHT/2-1, LCDHEIGHT/2-1);
+  const char msg[] = "Pomodoros:";
+  draw_string(1, 1, msg, sizeof(msg));
+  draw_number(1, 9, 12);
   LCD_display();
 
   /* USER CODE END 2 */

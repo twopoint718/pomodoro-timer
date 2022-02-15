@@ -1,4 +1,5 @@
 #include "glcdfont.c"
+#include "font8x8_basic.h"
 #include "pcd8544.h"
 
 // Adafruit implementation
@@ -139,3 +140,56 @@ void draw_char(int16_t x, int16_t y, unsigned char c, uint8_t color) {
         }
     }
 }
+
+/*******************************************************************************
+ * Draw an 8x8 character
+ ******************************************************************************/
+void draw_char8x8(int16_t x, int16_t y, unsigned char c, unsigned char color) {
+    if ((x >= LCDWIDTH) || (y >= LCDHEIGHT) || (x < 0) || (y < 0)) // clip
+        return;
+
+    for (int8_t j = 0; j < 8; j++) {
+        char row = font8x8_basic[c][j];
+        for (int8_t i = 0; i < 8; i++, row >>= 1)
+            if (row & 1)
+                LCD_drawPixel(x + i, y + j, color);
+    }
+}
+
+/*******************************************************************************
+ * Draw a buffer of characters as contiguous text. Using the LCDWIDTH and
+ * LCDHEIGHT parameters, attempt to fit the text within the screen area. Any \n
+ * characters in the text get turned into linebreaks within the drawn text.
+ ******************************************************************************/
+void draw_string(uint8_t x, uint8_t y, const char *msg, int size) {
+    int row = 0;
+    int col = 0;
+    int fill_col = LCDWIDTH/8;
+    int fill_row = LCDHEIGHT/8;
+    for (int i = 0; i < size; i++, col++) {
+      if (row >= fill_row) break;
+      if (col >= fill_col || msg[i] == '\n') {
+        row++;
+        col = 0;
+        if (msg[i] == '\n') continue; // skip the actual \n character
+      }
+      draw_char8x8(col * 8 + x, row * 8 + y, msg[i], 1);
+    }
+}
+
+/*******************************************************************************
+ * Draw a right-justified, up to 3 digit number at the location specified.
+ ******************************************************************************/
+void draw_number(uint8_t x, uint8_t y, uint8_t num) {
+    if (num == 0)
+        draw_char8x8(x + 16, y, '0', 1);
+    int xpos = x + 16;
+    while (num > 0) {
+        int d = num % 10;
+        draw_char8x8(xpos, y, d + '0', 1);
+        num /= 10;
+        xpos -= 8;
+    }
+}
+
+
