@@ -64,8 +64,11 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
+// STARTUP
+// init(void); // inits all peripherals & changes to SHOW_STATS state
+
 // TIMING
-// start_timer(...)
+// start_timer(...) // enables interrupt/sets timer to given duration
 // handle_times_up(...)
 
 // ORIENTATION
