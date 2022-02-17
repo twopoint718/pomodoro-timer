@@ -60,7 +60,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+static volatile uint8_t CLOCK_COUNTER = 0;
 /* USER CODE END 0 */
 
 /**
@@ -97,19 +97,21 @@ int main(void)
   BSP_ACCELERO_Init();
 
   LCD_begin(&hspi1, GPIOA, LCD_DC_Pin, LCD_RESET_Pin, 40, 0x04);
-  const char msg[] = "Pomodoros:";
+  const char msg[] = "Counting:";
   draw_string(1, 1, msg, sizeof(msg));
-  draw_number(1, 9, 12);
-  LCD_display();
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint8_t data[] = "Hello world\r\n";
+  uint8_t prev = 255;
   while (1) {
-	  HAL_UART_Transmit(&huart4, data, sizeof(data), 500);
-	  HAL_Delay(1000);
+      if (prev != CLOCK_COUNTER) {
+          draw_clear_rect(1, 9, 24, 8);
+          draw_number(1, 9, CLOCK_COUNTER);
+          prev = CLOCK_COUNTER;
+          LCD_display();
+      }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -166,7 +168,14 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+/*******************************************************************************
+ * Application-level tick callback. This should be about 1 actual second. Each
+ * time we get here we should decide if a pomodoro counter has elapsed or else
+ * continue to tick down.
+ ******************************************************************************/
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+    CLOCK_COUNTER++;
+}
 /* USER CODE END 4 */
 
 /**
