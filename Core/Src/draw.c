@@ -192,4 +192,11 @@ void draw_number(uint8_t x, uint8_t y, uint8_t num) {
     }
 }
 
+void draw_clear_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h) {
+    int i, j;
+    for (j = 0; j < h; j++)
+        for (i = 0; i < w; i++)
+            LCD_drawPixel(i + x, j + y, 0);
+}
+
 
