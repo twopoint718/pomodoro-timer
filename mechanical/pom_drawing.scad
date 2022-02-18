@@ -1,6 +1,6 @@
 l = 152.4;
 h = 50.8;
-gap = 10;
+gap = 1;
 
 // triangle
 polygon(points = [[0,0], [l * cos(60), l * sin(60)], [l, 0], [0, 0]]);
@@ -19,7 +19,7 @@ translate([l, -gap]) {
     }
 }
 
-translate([l + 10 + h * cos(30), h * sin(30)]) {
+translate([l + gap + h * cos(30), h * sin(30)]) {
     rotate(120) {
         square(size = [l, h]);
     }
