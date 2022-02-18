@@ -39,12 +39,14 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-typedef enum _state {
-    START,
-    SHOW_STATS,
-    TIMING_POMODORO,
-    TIMING_SHORT_BREAK,
-    TIMING_LONG_BREAK
+typedef enum _state {   // State description:
+    START,              // State when first booted, init some peripherals here
+    SHOW_STATS,         // "Splash screen" & display of current Pomodoro count
+    TIMING_POMODORO,    // During a 25-minute Pomodoro work session
+    TIMING_SHORT_BREAK, // During a 5-minute break session
+    TIMING_LONG_BREAK,  // During a 15-minute break session
+    TIMING_ELAPSED,     // Timer has expired from one of the above sessions
+    WAIT                // Do-nothing state (TODO: could be low-power here?)
 } state_t;
 
 /* USER CODE END ET */

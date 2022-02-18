@@ -49,7 +49,10 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+static volatile state_t State = START;          // initial state is START
+static volatile uint8_t num_pomodoros = 0;      // current number of pomodoros
+static volatile uint32_t ticks_remaining = 0;   // how long until timer elapses
+static volatile bool update_display = false;    // does display need to redraw
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -71,6 +74,8 @@ static int16_t pDataXYZ[3]; // accelerometer data
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+  char msg[] = "Pomodoros:";
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -96,26 +101,41 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   BSP_ACCELERO_Init();
-
-  LCD_begin(&hspi1, GPIOA, LCD_DC_Pin, LCD_RESET_Pin, 40, 0x04);
-//  const char msg[] = "Counting:";
-  const char msg[] = "Accelero:";
-  draw_string(0, 0, msg, sizeof(msg));
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint8_t prev = 255;
   while (1) {
-      if (prev != CLOCK_COUNTER) {
-          BSP_ACCELERO_AccGetXYZ(pDataXYZ);
-          draw_clear_rect(0, 8, LCDWIDTH, 24);
-          draw_number16(0, 8, pDataXYZ[0]);
-          draw_number16(0, 16, pDataXYZ[1]);
-          draw_number16(0, 24, pDataXYZ[2]);
-          prev = CLOCK_COUNTER;
-          LCD_display();
+      switch(State) {
+      case START:
+          LCD_begin(&hspi1, GPIOA, LCD_DC_Pin, LCD_RESET_Pin, 40, 0x04);
+          // TODO: start/init PWM, start/init button (GPIO)
+          State = SHOW_STATS;
+          break;
+      case SHOW_STATS:
+          draw_string(0, 0, msg, sizeof(msg));
+          draw_number(0, 8, num_pomodoros);
+          State = WAIT;
+          break;
+      case WAIT:
+          // TODO: could power-down here and be awoken by accel. interrupt?
+          break;
+      case TIMING_POMODORO:
+          ticks_remaining = 1500;       // set timer for 25 minutes
+          // TODO: enable timer interrupt
+          break;
+      case TIMING_LONG_BREAK:
+          ticks_remaining = 900;        // set timer for 15 minutes
+          break;
+      case TIMING_SHORT_BREAK:
+          ticks_remaining = 300;        // set timer for 5 minutes
+          break;
+      case TIMING_ELAPSED:
+          // TODO: disable timer interrupt
+          break;
+      default:
+          // Something has gone wrong
+          Error_Handler();
       }
     /* USER CODE END WHILE */
 
@@ -179,8 +199,22 @@ void SystemClock_Config(void)
  * continue to tick down.
  ******************************************************************************/
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-    CLOCK_COUNTER++;
+    if (ticks_remaining == 0) {
+        State = TIMING_ELAPSED;
+    } else {
+        ticks_remaining--;
+    }
 }
+
+/*******************************************************************************
+ * Application-level tick callback. This should be about 1 actual second. Each
+ * time we get here we should decide if a pomodoro counter has elapsed or else
+ * continue to tick down.
+ ******************************************************************************/
+//void AccelerometerCallback(TIM_HandleTypeDef *htim) {
+//    // TODO: want to be notified when accelerometer has significantly new
+//    //   data to display. ???
+//}
 /* USER CODE END 4 */
 
 /**
