@@ -192,6 +192,25 @@ void draw_number(uint8_t x, uint8_t y, uint8_t num) {
     }
 }
 
+/*******************************************************************************
+ * Draw a right-justified, up to 5 digit number at the location specified.
+ ******************************************************************************/
+void draw_number16(uint8_t x, uint8_t y, int16_t num) {
+    if (num == 0)
+        draw_char8x8(x + 6*8, y, '0', 1);
+    int xpos = x + 6*8;
+    if (num < 0) {
+        draw_char8x8(x, y, '-', 1);
+        num = num * -1;
+    }
+    while (num > 0) {
+        int d = num % 10;
+        draw_char8x8(xpos, y, d + '0', 1);
+        num /= 10;
+        xpos -= 8;
+    }
+}
+
 void draw_clear_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h) {
     int i, j;
     for (j = 0; j < h; j++)

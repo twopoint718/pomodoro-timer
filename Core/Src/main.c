@@ -61,6 +61,7 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 static volatile uint8_t CLOCK_COUNTER = 0;
+static int16_t pDataXYZ[3]; // accelerometer data
 /* USER CODE END 0 */
 
 /**
@@ -97,8 +98,9 @@ int main(void)
   BSP_ACCELERO_Init();
 
   LCD_begin(&hspi1, GPIOA, LCD_DC_Pin, LCD_RESET_Pin, 40, 0x04);
-  const char msg[] = "Counting:";
-  draw_string(1, 1, msg, sizeof(msg));
+//  const char msg[] = "Counting:";
+  const char msg[] = "Accelero:";
+  draw_string(0, 0, msg, sizeof(msg));
 
   /* USER CODE END 2 */
 
@@ -107,8 +109,11 @@ int main(void)
   uint8_t prev = 255;
   while (1) {
       if (prev != CLOCK_COUNTER) {
-          draw_clear_rect(1, 9, 24, 8);
-          draw_number(1, 9, CLOCK_COUNTER);
+          BSP_ACCELERO_AccGetXYZ(pDataXYZ);
+          draw_clear_rect(0, 8, LCDWIDTH, 24);
+          draw_number16(0, 8, pDataXYZ[0]);
+          draw_number16(0, 16, pDataXYZ[1]);
+          draw_number16(0, 24, pDataXYZ[2]);
           prev = CLOCK_COUNTER;
           LCD_display();
       }
