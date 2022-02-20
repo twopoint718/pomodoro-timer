@@ -230,14 +230,20 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
  │          │ USB │
  │          └──┬──┘
  └─────────────┘
+ The value returned is in mg, (e.g. 1/1000 of g). Full-scale is about 1,000 on
+ any axis.
 */
 state_t get_orientation(int16_t (*pDataXYZ)[3]) {
     uint16_t x = *pDataXYZ[0];
     uint16_t y = *pDataXYZ[1];
     uint16_t z = *pDataXYZ[2];
-    if (x < -500 && abs(y) < 500 && abs(z) < 500)
+    if (x < -800 && abs(y) < 100 && abs(z) < 100) // (all neg X direction)
         return TIMING_POMODORO;
-
+    if (y > 800 && x > 450 && abs(z) < 100)       // y>1000*cos(30), x>1000*sin(30)
+        return TIMING_LONG_BREAK;
+    if (y < -800 && x > 450 && abs(z) < 100)      // (^^ reflected over x-axis)
+        return TIMING_SHORT_BREAK;
+    // In positive z direction, or indeterminate
     return WAIT;
 }
 /* USER CODE END 4 */
