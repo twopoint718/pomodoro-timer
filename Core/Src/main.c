@@ -53,6 +53,7 @@ static volatile state_t State = START;          // initial state is START
 static volatile uint8_t num_pomodoros = 0;      // current number of pomodoros
 static volatile uint32_t ticks_remaining = 0;   // how long until timer elapses
 static volatile bool update_display = false;    // does display need to redraw
+extern TIM_HandleTypeDef htim2;                 // Timer 2 handle
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -113,25 +114,33 @@ int main(void)
           State = SHOW_STATS;
           break;
       case SHOW_STATS:
+          LCD_clearDisplay();                   // clear display
           draw_string(0, 0, msg, sizeof(msg));
           draw_number(0, 8, num_pomodoros);
+          LCD_display();
           State = WAIT;
           break;
       case WAIT:
-          // TODO: could power-down here and be awoken by accel. interrupt?
+          BSP_ACCELERO_AccGetXYZ(pDataXYZ);     // read accelerometer
+          // TODO: check for orientation changes
+          state_t orientation_state = get_orientation(&pDataXYZ);
+          State = orientation_state;
           break;
       case TIMING_POMODORO:
-          ticks_remaining = 1500;       // set timer for 25 minutes
-          // TODO: enable timer interrupt
+          ticks_remaining = 1500;               // set timer for 25 minutes
+          HAL_TIM_Base_MspInit(&htim2);         // enable timer interrupt
           break;
       case TIMING_LONG_BREAK:
-          ticks_remaining = 900;        // set timer for 15 minutes
+          ticks_remaining = 900;                // set timer for 15 minutes
+          HAL_TIM_Base_MspInit(&htim2);         // enable timer interrupt
           break;
       case TIMING_SHORT_BREAK:
-          ticks_remaining = 300;        // set timer for 5 minutes
+          ticks_remaining = 300;                // set timer for 5 minutes
+          HAL_TIM_Base_MspInit(&htim2);         // enable timer interrupt
           break;
       case TIMING_ELAPSED:
-          // TODO: disable timer interrupt
+          HAL_TIM_Base_MspDeInit(&htim2);       // disable timer interrupt
+          State = SHOW_STATS;
           break;
       default:
           // Something has gone wrong
@@ -206,15 +215,31 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     }
 }
 
-/*******************************************************************************
- * Application-level tick callback. This should be about 1 actual second. Each
- * time we get here we should decide if a pomodoro counter has elapsed or else
- * continue to tick down.
- ******************************************************************************/
-//void AccelerometerCallback(TIM_HandleTypeDef *htim) {
-//    // TODO: want to be notified when accelerometer has significantly new
-//    //   data to display. ???
-//}
+/**
+ * Determine orientation for the board based on the current accelerometer
+ * reading. Note that positive Z is "down" as viewed from the front/face.
+ ┌─────────────┐
+ │     +X      │
+ │      ▲      │
+ │      │      │
+ │      │      │
+ │+Y◀───◎      │
+ │     +Z      │
+ │ (into page) │
+ │          ┌──┴──┐
+ │          │ USB │
+ │          └──┬──┘
+ └─────────────┘
+*/
+state_t get_orientation(int16_t (*pDataXYZ)[3]) {
+    uint16_t x = *pDataXYZ[0];
+    uint16_t y = *pDataXYZ[1];
+    uint16_t z = *pDataXYZ[2];
+    if (x < -500 && abs(y) < 500 && abs(z) < 500)
+        return TIMING_POMODORO;
+
+    return WAIT;
+}
 /* USER CODE END 4 */
 
 /**

@@ -65,6 +65,7 @@ typedef enum _state {   // State description:
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
+state_t get_orientation(int16_t (*pDataXYZ)[3]);
 
 // STARTUP
 // init(void); // inits all peripherals & changes to SHOW_STATS state
