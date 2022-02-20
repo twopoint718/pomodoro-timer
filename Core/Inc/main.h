@@ -42,10 +42,12 @@ extern "C" {
 typedef enum _state {   // State description:
     START,              // State when first booted, init some peripherals here
     SHOW_STATS,         // "Splash screen" & display of current Pomodoro count
-    TIMING_POMODORO,    // During a 25-minute Pomodoro work session
-    TIMING_SHORT_BREAK, // During a 5-minute break session
-    TIMING_LONG_BREAK,  // During a 15-minute break session
-    TIMING_ELAPSED,     // Timer has expired from one of the above sessions
+    POMODORO,           // During a 25-minute Pomodoro work session
+    SHORT_BREAK,        // During a 5-minute break session
+    LONG_BREAK,         // During a 15-minute break session
+    TIMING,             // State common to all timing states
+    ELAPSED,            // Timer has expired from one of the above sessions
+    RESETTING,          // Waiting for device to prepare for next timing sess.
     WAIT                // Do-nothing state (TODO: could be low-power here?)
 } state_t;
 
@@ -65,7 +67,7 @@ typedef enum _state {   // State description:
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-state_t get_orientation(int16_t (*pDataXYZ)[3]);
+state_t get_orientation(int16_t *pDataXYZ);
 
 // STARTUP
 // init(void); // inits all peripherals & changes to SHOW_STATS state

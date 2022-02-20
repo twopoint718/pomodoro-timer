@@ -49,11 +49,12 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-static volatile state_t State = START;          // initial state is START
+extern TIM_HandleTypeDef htim2;                 // Timer 2 handle
+
+static volatile state_t State;                  // initial state is START
 static volatile uint8_t num_pomodoros = 0;      // current number of pomodoros
 static volatile uint32_t ticks_remaining = 0;   // how long until timer elapses
-static volatile bool update_display = false;    // does display need to redraw
-extern TIM_HandleTypeDef htim2;                 // Timer 2 handle
+static bool pomodoro_started = false;  // Keep track of poms
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -64,7 +65,6 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-static volatile uint8_t CLOCK_COUNTER = 0;
 static int16_t pDataXYZ[3]; // accelerometer data
 /* USER CODE END 0 */
 
@@ -75,7 +75,12 @@ static int16_t pDataXYZ[3]; // accelerometer data
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  char msg[] = "Pomodoros:";
+  const char msg[]         = "Pomodoros:";
+  const char pom_lbl[]     = "POMODORO";
+  const char sbreak_lbl[]  = "S. BREAK";
+  const char lbreak_lbl[]  = "L. BREAK";
+  const char elapsed_lbl[] = "DONE!";
+  state_t orientation_state;        // The current timing/orientation state
 
   /* USER CODE END 1 */
 
@@ -102,45 +107,74 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   BSP_ACCELERO_Init();
+  LCD_begin(&hspi1, GPIOA, LCD_DC_Pin, LCD_RESET_Pin, 40, 0x04);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  State = START;
   while (1) {
       switch(State) {
       case START:
-          LCD_begin(&hspi1, GPIOA, LCD_DC_Pin, LCD_RESET_Pin, 40, 0x04);
           // TODO: start/init PWM, start/init button (GPIO)
           State = SHOW_STATS;
           break;
       case SHOW_STATS:
           LCD_clearDisplay();                   // clear display
-          draw_string(0, 0, msg, sizeof(msg));
-          draw_number(0, 8, num_pomodoros);
-          LCD_display();
+          draw_string(0, 0, msg, sizeof(msg));  // "Pomodoros:"
+          draw_number(0, 8, num_pomodoros);     // NUM
+          LCD_display();                        // write to display
           State = WAIT;
+          HAL_Delay(1000);                      // Hold for accel to settle
           break;
       case WAIT:
           BSP_ACCELERO_AccGetXYZ(pDataXYZ);     // read accelerometer
-          // TODO: check for orientation changes
-          state_t orientation_state = get_orientation(&pDataXYZ);
+          orientation_state = get_orientation(pDataXYZ);
           State = orientation_state;
           break;
-      case TIMING_POMODORO:
-          ticks_remaining = 1500;               // set timer for 25 minutes
+      case POMODORO:
+          ticks_remaining = 15;                 // set timer for 25 minutes
+          pomodoro_started = true;
+          LCD_clearDisplay();
+          draw_string(0, 0, pom_lbl, sizeof(pom_lbl));
           HAL_TIM_Base_MspInit(&htim2);         // enable timer interrupt
+          State = TIMING;
           break;
-      case TIMING_LONG_BREAK:
-          ticks_remaining = 900;                // set timer for 15 minutes
+      case LONG_BREAK:
+          ticks_remaining = 9;                  // set timer for 15 minutes
+          LCD_clearDisplay();
+          draw_string(0, 0, lbreak_lbl, sizeof(lbreak_lbl));
           HAL_TIM_Base_MspInit(&htim2);         // enable timer interrupt
+          State = TIMING;
           break;
-      case TIMING_SHORT_BREAK:
-          ticks_remaining = 300;                // set timer for 5 minutes
+      case SHORT_BREAK:
+          ticks_remaining = 3;                  // set timer for 5 minutes
+          LCD_clearDisplay();
+          draw_string(0, 0, sbreak_lbl, sizeof(sbreak_lbl));
           HAL_TIM_Base_MspInit(&htim2);         // enable timer interrupt
+          State = TIMING;
           break;
-      case TIMING_ELAPSED:
+      case TIMING:
+          draw_clear_rect(0, 24, LCDWIDTH, 8);
+          draw_number16(0, 24, ticks_remaining);
+          LCD_display();
+          break;
+      case ELAPSED:
           HAL_TIM_Base_MspDeInit(&htim2);       // disable timer interrupt
-          State = SHOW_STATS;
+          if (pomodoro_started) {               // IF we finished a pomodoro
+              num_pomodoros++;                  // Increment statistics
+              pomodoro_started = false;         // no longer in a pomodoro
+          }
+          LCD_clearDisplay();
+          draw_string(0, 0, elapsed_lbl, sizeof(elapsed_lbl));
+          LCD_display();
+          State = RESETTING;
+          break;
+      case RESETTING:
+          BSP_ACCELERO_AccGetXYZ(pDataXYZ);
+          if (get_orientation(pDataXYZ) == WAIT) { // stay here until timer is
+              State = SHOW_STATS;                  //   re-oriented, show counts
+          }
           break;
       default:
           // Something has gone wrong
@@ -209,13 +243,13 @@ void SystemClock_Config(void)
  ******************************************************************************/
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if (ticks_remaining == 0) {
-        State = TIMING_ELAPSED;
+        State = ELAPSED;
     } else {
         ticks_remaining--;
     }
 }
 
-/**
+/*******************************************************************************
  * Determine orientation for the board based on the current accelerometer
  * reading. Note that positive Z is "down" as viewed from the front/face.
  ┌─────────────┐
@@ -230,19 +264,20 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
  │          │ USB │
  │          └──┬──┘
  └─────────────┘
- The value returned is in mg, (e.g. 1/1000 of g). Full-scale is about 1,000 on
- any axis.
-*/
-state_t get_orientation(int16_t (*pDataXYZ)[3]) {
-    uint16_t x = *pDataXYZ[0];
-    uint16_t y = *pDataXYZ[1];
-    uint16_t z = *pDataXYZ[2];
+ The value returned is in mg, (i.e. 1/1000 of g). Full-scale is about 1,000 on
+ any axis. This function returns one of the timing states to transition to or
+ else to wait.
+*******************************************************************************/
+state_t get_orientation(int16_t *pDataXYZ) {
+    int16_t x = pDataXYZ[0];
+    int16_t y = pDataXYZ[1];
+    int16_t z = pDataXYZ[2];
     if (x < -800 && abs(y) < 100 && abs(z) < 100) // (all neg X direction)
-        return TIMING_POMODORO;
+        return POMODORO;
     if (y > 800 && x > 450 && abs(z) < 100)       // y>1000*cos(30), x>1000*sin(30)
-        return TIMING_LONG_BREAK;
+        return LONG_BREAK;
     if (y < -800 && x > 450 && abs(z) < 100)      // (^^ reflected over x-axis)
-        return TIMING_SHORT_BREAK;
+        return SHORT_BREAK;
     // In positive z direction, or indeterminate
     return WAIT;
 }
