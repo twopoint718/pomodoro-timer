@@ -39,6 +39,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
+//#define DEBUG_OUTPUT
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -50,6 +53,7 @@
 
 /* USER CODE BEGIN PV */
 extern TIM_HandleTypeDef htim2;             // Timer 2 handle
+extern UART_HandleTypeDef huart4;           // UART 4 handle
 
 static volatile state_t State;              // initial state is START
 static volatile uint8_t num_pomodoros;      // current number of pomodoros
@@ -136,7 +140,7 @@ int main(void)
           State = orientation_state;
           break;
       case POMODORO:
-          ticks_remaining = 15;                 // set timer for 25 minutes
+          ticks_remaining = 1500;               // set timer for 25 minutes
           pomodoro_started = true;
           LCD_clearDisplay();
           draw_string(0, 0, pom_lbl, sizeof(pom_lbl));
@@ -144,14 +148,14 @@ int main(void)
           State = TIMING;
           break;
       case LONG_BREAK:
-          ticks_remaining = 9;                  // set timer for 15 minutes
+          ticks_remaining = 900;                // set timer for 15 minutes
           LCD_clearDisplay();
           draw_string(0, 0, lbreak_lbl, sizeof(lbreak_lbl));
           HAL_TIM_Base_MspInit(&htim2);         // enable timer interrupt
           State = TIMING;
           break;
       case SHORT_BREAK:
-          ticks_remaining = 3;                  // set timer for 5 minutes
+          ticks_remaining = 5;                  // set timer for 5 minutes
           LCD_clearDisplay();
           draw_string(0, 0, sbreak_lbl, sizeof(sbreak_lbl));
           HAL_TIM_Base_MspInit(&htim2);         // enable timer interrupt
@@ -159,7 +163,7 @@ int main(void)
           break;
       case TIMING:
           draw_clear_rect(0, 24, LCDWIDTH, 8);
-          draw_number16(0, 24, ticks_remaining);
+          draw_time(0, 24, ticks_remaining);
           LCD_display();
           break;
       case ELAPSED:
@@ -285,12 +289,30 @@ state_t get_orientation(int16_t *pDataXYZ) {
     int16_t x = pDataXYZ[0];
     int16_t y = pDataXYZ[1];
     int16_t z = pDataXYZ[2];
-    if (x < -800 && abs(y) < 100 && abs(z) < 100) // (all neg X direction)
+#ifdef DEBUG_OUTPUT
+    uint8_t buff[20];
+#endif
+    if (x < -800 && abs(y) < 100 && abs(z) < 100) { // (all neg X direction)
+#ifdef DEBUG_OUTPUT
+        sprintf((char *)buff, "x=%i\n", x);
+        HAL_UART_Transmit_IT(&huart4, buff, strlen((char *)buff));
+#endif
         return POMODORO;
-    if (y > 800 && x > 450 && abs(z) < 100)       // y>1000*cos(30), x>1000*sin(30)
+    }
+    if (y > 800 && x > 450 && abs(z) < 100) {       // y>1000*cos(30), x>1000*sin(30)
+#ifdef DEBUG_OUTPUT
+        sprintf((char *)buff, "x=%i, y=%i\n", x, y);
+        HAL_UART_Transmit_IT(&huart4, buff, strlen((char *)buff));
+#endif
         return LONG_BREAK;
-    if (y < -800 && x > 450 && abs(z) < 100)      // (^^ reflected over x-axis)
+    }
+    if (y < -800 && x > 450 && abs(z) < 100) {      // (^^ reflected over x-axis)
+#ifdef DEBUG_OUTPUT
+        sprintf((char *)buff, "x=%i, y=%i\n", x, y);
+        HAL_UART_Transmit_IT(&huart4, buff, strlen((char *)buff));
+#endif
         return SHORT_BREAK;
+    }
     // In positive z direction, or indeterminate
     return WAIT;
 }

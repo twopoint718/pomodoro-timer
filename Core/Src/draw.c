@@ -211,6 +211,21 @@ void draw_number16(uint8_t x, uint8_t y, int16_t num) {
     }
 }
 
+/*******************************************************************************
+ * Format a time in minutes and seconds like: 'HH:MM' valid inputs for h, and m
+ * are in the range 0-59.
+ ******************************************************************************/
+void draw_time(uint8_t x, uint8_t y, uint32_t ticks) {
+    uint8_t m = ticks / 60;
+    uint8_t s = ticks % 60;
+    int16_t xpos = x + 40;
+    draw_char8x8(xpos, y, s%10 + '0', 1); xpos -= 8;
+    draw_char8x8(xpos, y, s/10 + '0', 1); xpos -= 8;
+    draw_char8x8(xpos, y, ':', 1);        xpos -= 8;
+    draw_char8x8(xpos, y, m%10 + '0', 1); xpos -= 8;
+    draw_char8x8(xpos, y, m/10 + '0', 1);
+}
+
 void draw_clear_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h) {
     int i, j;
     for (j = 0; j < h; j++)
