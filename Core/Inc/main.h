@@ -88,8 +88,6 @@ state_t get_orientation(int16_t *pDataXYZ);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define BUTTON_EXTI13_Pin GPIO_PIN_13
-#define BUTTON_EXTI13_GPIO_Port GPIOC
 #define LCD_RESET_Pin GPIO_PIN_2
 #define LCD_RESET_GPIO_Port GPIOA
 #define LCD_DC_Pin GPIO_PIN_3
