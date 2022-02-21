@@ -93,7 +93,7 @@ state_t get_orientation(int16_t *pDataXYZ);
 #define LCD_DC_Pin GPIO_PIN_3
 #define LCD_DC_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
-
+#define USER_BUTTON GPIO_PIN_13
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

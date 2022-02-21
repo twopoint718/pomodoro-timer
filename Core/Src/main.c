@@ -49,12 +49,12 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-extern TIM_HandleTypeDef htim2;                 // Timer 2 handle
+extern TIM_HandleTypeDef htim2;             // Timer 2 handle
 
-static volatile state_t State;                  // initial state is START
-static volatile uint8_t num_pomodoros = 0;      // current number of pomodoros
-static volatile uint32_t ticks_remaining = 0;   // how long until timer elapses
-static bool pomodoro_started = false;  // Keep track of poms
+static volatile state_t State;              // initial state is START
+static volatile uint8_t num_pomodoros;      // current number of pomodoros
+static volatile uint32_t ticks_remaining;   // how long until timer elapses
+static bool pomodoro_started;               // Keep track of poms
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -80,6 +80,8 @@ int main(void)
   const char sbreak_lbl[]  = "S. BREAK";
   const char lbreak_lbl[]  = "L. BREAK";
   const char elapsed_lbl[] = "DONE!";
+
+  num_pomodoros = 0;                // Set initial pomodoro count
   state_t orientation_state;        // The current timing/orientation state
 
   /* USER CODE END 1 */
@@ -115,8 +117,9 @@ int main(void)
   State = START;
   while (1) {
       switch(State) {
-      case START:
-          // TODO: start/init PWM, start/init button (GPIO)
+      case START:                               // (also used as reSTART)
+          pomodoro_started = false;             // clear pomodoro flag (if any)
+          ticks_remaining = 0;                  // cancel any remaining time
           State = SHOW_STATS;
           break;
       case SHOW_STATS:
@@ -161,7 +164,7 @@ int main(void)
           break;
       case ELAPSED:
           HAL_TIM_Base_MspDeInit(&htim2);       // disable timer interrupt
-          if (pomodoro_started) {               // IF we finished a pomodoro
+          if (pomodoro_started) {               // if we finished a pomodoro
               num_pomodoros++;                  // Increment statistics
               pomodoro_started = false;         // no longer in a pomodoro
           }
@@ -247,6 +250,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     } else {
         ticks_remaining--;
     }
+}
+
+/*******************************************************************************
+ * This callback is triggered when the blue USER button is pressed. We abort the
+ * currently-timing session and revert back to an initial mode with all
+ * setttings at initial values.
+ ******************************************************************************/
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+    if (GPIO_Pin == USER_BUTTON)
+        State = START;
 }
 
 /*******************************************************************************
