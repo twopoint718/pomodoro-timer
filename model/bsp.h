@@ -22,17 +22,15 @@
 /* a very simple Board Support Package (BSP) -------------------------------*/
 enum { BSP_TICKS_PER_SEC = 100 }; /* number of clock ticks in a second */
 void BSP_init(void);
-void BSP_ledOff(void);
-void BSP_ledOn(void);
 
 /* define the event signals used in the application ------------------------*/
-enum BlinkySignals {
+enum PomodoroSignals {
     TIMEOUT_SIG = Q_USER_SIG, /* offset the first signal by Q_USER_SIG */
     MAX_SIG /* keep last (the number of signals) */
 };
 
 /* active object(s) used in this application -------------------------------*/
-extern QActive * const AO_Blinky; /* opaque pointer to the Blinky AO */
+extern QActive * const AO_Pomodoro; /* opaque pointer to the Pomodoro AO */
 /*.$declare${AOs::Pomodoro_ctor} vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv*/
 /*.${AOs::Pomodoro_ctor} ...................................................*/
 void Pomodoro_ctor(void);

@@ -28,8 +28,6 @@ void BSP_init(void)   {
            "Press Ctrl-C to quit...\n",
            QP_VERSION_STR);
 }
-void BSP_ledOff(void) { printf("LED OFF\n"); }
-void BSP_ledOn(void)  { printf("LED ON\n");  }
 
 /* callback functions needed by the framework ------------------------------*/
 void QF_onStartup(void) {}

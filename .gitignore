@@ -3,3 +3,4 @@ Debug
 docs
 *.FCStd
 .DS_Store
+*.d

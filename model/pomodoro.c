@@ -19,7 +19,7 @@
 #include "qpc.h"    /* QP/C framework API */
 #include "bsp.h"    /* Board Support Package interface */
 
-/* ask QM to declare the Blinky class --------------------------------------*/
+/* ask QM to declare the Pomodoro class ------------------------------------*/
 /*.$declare${AOs::Pomodoro} vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv*/
 /*.${AOs::Pomodoro} ........................................................*/
 typedef struct {
@@ -39,11 +39,11 @@ static QState Pomodoro_long_break(Pomodoro * const me, QEvt const * const e);
 static QState Pomodoro_pomodoro(Pomodoro * const me, QEvt const * const e);
 /*.$enddecl${AOs::Pomodoro} ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-/* instantiate the Blinky active object ------------------------------------*/
-static Blinky l_blinky;
-QActive * const AO_Blinky = &l_blinky.super;
+/* instantiate the Pomodoro active object ----------------------------------*/
+static Pomodoro l_pomodoro;
+QActive * const AO_Pomodoro = &l_pomodoro.super;
 
-/* ask QM to define the Blinky class ---------------------------------------*/
+/* ask QM to define the Pomodoro class -------------------------------------*/
 /*.$skip${QP_VERSION} vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv*/
 /*. Check for the minimum required QP version */
 #if (QP_VERSION < 690U) || (QP_VERSION != ((QP_RELEASE^4294967295U) % 0x3E8U))
@@ -53,8 +53,8 @@ QActive * const AO_Blinky = &l_blinky.super;
 /*.$define${AOs::Pomodoro_ctor} vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv*/
 /*.${AOs::Pomodoro_ctor} ...................................................*/
 void Pomodoro_ctor(void) {
-    Blinky *me = (Blinky *)AO_Blinky;
-    QActive_ctor(&me->super, Q_STATE_CAST(&Blinky_initial));
+    Pomodoro *me = (Pomodoro *)AO_Pomodoro;
+    QActive_ctor(&me->super, Q_STATE_CAST(&Pomodoro_initial));
     QTimeEvt_ctorX(&me->timeEvt, &me->super, TIMEOUT_SIG, 0U);
 }
 /*.$enddef${AOs::Pomodoro_ctor} ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
