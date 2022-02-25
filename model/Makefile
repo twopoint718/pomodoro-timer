@@ -152,7 +152,7 @@ ifeq (rel, $(CONF)) # Release configuration ..................................
 
 BIN_DIR := build_rel
 # gcc options:
-CFLAGS  = -c -O3 -fno-pie -std=c11 -pedantic -Wall -Wextra -W -Wno-c11-extensions \
+CFLAGS  = -c -O3 -std=c11 -pedantic -Wall -Wextra -W -Wno-c11-extensions \
 	$(INCLUDES) $(DEFINES) -DNDEBUG
 
 CPPFLAGS = -c -O3 -fno-pie -std=c++11 -pedantic -Wall -Wextra \
@@ -167,10 +167,10 @@ C_SRCS   += $(QS_SRCS)
 VPATH    += $(QPC)/src/qs
 
 # gcc options:
-CFLAGS  = -c -g -O -fno-pie -std=c11 -pedantic -Wall -Wextra -W -Wno-c11-extensions \
+CFLAGS  = -c -g -O -std=c11 -pedantic -Wall -Wextra -W -Wno-c11-extensions \
 	$(INCLUDES) $(DEFINES) -DQ_SPY
 
-CPPFLAGS = -c -g -O -fno-pie -std=c++11 -pedantic -Wall -Wextra \
+CPPFLAGS = -c -g -O -std=c++11 -pedantic -Wall -Wextra \
 	-fno-rtti -fno-exceptions \
 	$(INCLUDES) $(DEFINES) -DQ_SPY
 
@@ -179,7 +179,7 @@ else # default Debug configuration .........................................
 BIN_DIR := build
 
 # gcc options:
-CFLAGS  = -c -g -O -fno-pie -std=c11 -pedantic -Wall -Wextra -W -Wno-c11-extensions \
+CFLAGS  = -c -g -O -std=c11 -pedantic -Wall -Wextra -W -Wno-c11-extensions \
 	$(INCLUDES) $(DEFINES)
 
 CPPFLAGS = -c -g -O -fno-pie -std=c++11 -pedantic -Wall -Wextra \
@@ -188,7 +188,7 @@ CPPFLAGS = -c -g -O -fno-pie -std=c++11 -pedantic -Wall -Wextra \
 
 endif  # .....................................................................
 
-LINKFLAGS := -no-pie
+# LINKFLAGS := -no-pie
 
 #-----------------------------------------------------------------------------
 C_OBJS       := $(patsubst %.c,%.o,   $(C_SRCS))
