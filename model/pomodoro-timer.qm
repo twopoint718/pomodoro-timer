@@ -6,15 +6,15 @@
  <package name="AOs" stereotype="0x02">
   <!--${AOs::Pomodoro}-->
   <class name="Pomodoro" superclass="qpc::QActive">
-   <!--${AOs::Pomodoro::timetEvt}-->
-   <attribute name="timetEvt" type="QTimeEvt" visibility="0x02" properties="0x00">
+   <!--${AOs::Pomodoro::timeEvt}-->
+   <attribute name="timeEvt" type="QTimeEvt" visibility="0x02" properties="0x00">
     <documentation>When a timer has elapsed</documentation>
    </attribute>
    <!--${AOs::Pomodoro::SM}-->
    <statechart properties="0x01">
     <!--${AOs::Pomodoro::SM::initial}-->
     <initial target="../1">
-     <action brief="arm time event">QTimeEvt_arm(&amp;me-&gt;timetEvt, BSP_TICKS_PER_SEC/2,
+     <action brief="arm time event">QTimeEvt_armX(&amp;me-&gt;timeEvt, BSP_TICKS_PER_SEC/2,
              BSP_TICKS_PER_SEC/2);</action>
      <initial_glyph conn="2,6,5,0,5,4">
       <action box="0,-4,13,3"/>
@@ -106,6 +106,9 @@ void BSP_init(void);
 /* define the event signals used in the application ------------------------*/
 enum PomodoroSignals {
     TIMEOUT_SIG = Q_USER_SIG, /* offset the first signal by Q_USER_SIG */
+    ORIENT_LB_SIG,
+    ORIENT_SB_SIG,
+    ORIENT_P_SIG,
     MAX_SIG /* keep last (the number of signals) */
 };
 
@@ -113,7 +116,8 @@ enum PomodoroSignals {
 extern QActive * const AO_Pomodoro; /* opaque pointer to the Pomodoro AO */
 $declare${AOs::Pomodoro_ctor}
 
-#endif /* BSP_H */</text>
+#endif /* BSP_H */
+</text>
   </file>
   <!--${.::bsp.c}-->
   <file name="bsp.c">
@@ -139,7 +143,8 @@ void QF_onClockTick(void) {
 void Q_onAssert(char const * const module, int loc) {
     fprintf(stderr, &quot;Assertion failed in %s:%d&quot;, module, loc);
     exit(-1);
-}</text>
+}
+</text>
   </file>
   <!--${.::main.c}-->
   <file name="main.c">
@@ -323,7 +328,7 @@ ifeq (rel, $(CONF)) # Release configuration ..................................
 
 BIN_DIR := build_rel
 # gcc options:
-CFLAGS  = -c -O3 -fno-pie -std=c99 -pedantic -Wall -Wextra -W \
+CFLAGS  = -c -O3 -fno-pie -std=c11 -pedantic -Wall -Wextra -W -Wno-c11-extensions \
     $(INCLUDES) $(DEFINES) -DNDEBUG
 
 CPPFLAGS = -c -O3 -fno-pie -std=c++11 -pedantic -Wall -Wextra \
@@ -338,7 +343,7 @@ C_SRCS   += $(QS_SRCS)
 VPATH    += $(QPC)/src/qs
 
 # gcc options:
-CFLAGS  = -c -g -O -fno-pie -std=c99 -pedantic -Wall -Wextra -W \
+CFLAGS  = -c -g -O -fno-pie -std=c11 -pedantic -Wall -Wextra -W -Wno-c11-extensions \
     $(INCLUDES) $(DEFINES) -DQ_SPY
 
 CPPFLAGS = -c -g -O -fno-pie -std=c++11 -pedantic -Wall -Wextra \
@@ -350,7 +355,7 @@ else # default Debug configuration .........................................
 BIN_DIR := build
 
 # gcc options:
-CFLAGS  = -c -g -O -fno-pie -std=c99 -pedantic -Wall -Wextra -W \
+CFLAGS  = -c -g -O -fno-pie -std=c11 -pedantic -Wall -Wextra -W -Wno-c11-extensions \
     $(INCLUDES) $(DEFINES)
 
 CPPFLAGS = -c -g -O -fno-pie -std=c++11 -pedantic -Wall -Wextra \

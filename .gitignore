@@ -4,3 +4,5 @@ docs
 *.FCStd
 .DS_Store
 *.d
+*.o
+model/build/*

@@ -27,7 +27,7 @@ typedef struct {
     QActive super;
 
 /* private: */
-    QTimeEvt timetEvt;
+    QTimeEvt timeEvt;
 } Pomodoro;
 
 /* protected: */
@@ -63,7 +63,7 @@ void Pomodoro_ctor(void) {
 /*.${AOs::Pomodoro::SM} ....................................................*/
 static QState Pomodoro_initial(Pomodoro * const me, void const * const par) {
     /*.${AOs::Pomodoro::SM::initial} */
-    QTimeEvt_arm(&me->timetEvt, BSP_TICKS_PER_SEC/2,
+    QTimeEvt_armX(&me->timeEvt, BSP_TICKS_PER_SEC/2,
                  BSP_TICKS_PER_SEC/2);
     return Q_TRAN(&Pomodoro_show_stats);
 }

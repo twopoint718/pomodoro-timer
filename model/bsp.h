@@ -26,6 +26,9 @@ void BSP_init(void);
 /* define the event signals used in the application ------------------------*/
 enum PomodoroSignals {
     TIMEOUT_SIG = Q_USER_SIG, /* offset the first signal by Q_USER_SIG */
+    ORIENT_LB_SIG,
+    ORIENT_SB_SIG,
+    ORIENT_P_SIG,
     MAX_SIG /* keep last (the number of signals) */
 };
 
