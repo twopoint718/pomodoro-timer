@@ -22,6 +22,8 @@
 /* a very simple Board Support Package (BSP) -------------------------------*/
 enum { BSP_TICKS_PER_SEC = 100 }; /* number of clock ticks in a second */
 void BSP_init(void);
+void BSP_stopTimer(void);
+void BSP_incrementPomodoro(void);
 
 /* define the event signals used in the application ------------------------*/
 enum PomodoroSignals {

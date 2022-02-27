@@ -97,6 +97,12 @@ static QState Pomodoro_show_stats(Pomodoro * const me, QEvt const * const e) {
 static QState Pomodoro_timing(Pomodoro * const me, QEvt const * const e) {
     QState status_;
     switch (e->sig) {
+        /*.${AOs::Pomodoro::SM::timing} */
+        case Q_EXIT_SIG: {
+            BSP_stopTimer();
+            status_ = Q_HANDLED();
+            break;
+        }
         /*.${AOs::Pomodoro::SM::timing::TIMEOUT} */
         case TIMEOUT_SIG: {
             status_ = Q_TRAN(&Pomodoro_show_stats);
@@ -135,6 +141,12 @@ static QState Pomodoro_long_break(Pomodoro * const me, QEvt const * const e) {
 static QState Pomodoro_pomodoro(Pomodoro * const me, QEvt const * const e) {
     QState status_;
     switch (e->sig) {
+        /*.${AOs::Pomodoro::SM::timing::pomodoro} */
+        case Q_EXIT_SIG: {
+            BSP_incrementPomodoro();
+            status_ = Q_HANDLED();
+            break;
+        }
         default: {
             status_ = Q_SUPER(&Pomodoro_timing);
             break;

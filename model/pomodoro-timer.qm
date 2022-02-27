@@ -45,6 +45,7 @@
     </state>
     <!--${AOs::Pomodoro::SM::timing}-->
     <state name="timing">
+     <exit brief="stop timer">BSP_stopTimer();</exit>
      <!--${AOs::Pomodoro::SM::timing::TIMEOUT}-->
      <tran trig="TIMEOUT" target="../../1">
       <tran_glyph conn="37,8,3,0,-24,2">
@@ -61,9 +62,14 @@
      </state>
      <!--${AOs::Pomodoro::SM::timing::pomodoro}-->
      <state name="pomodoro">
-      <state_glyph node="47,36,12,12"/>
+      <exit brief="num_poms++">BSP_incrementPomodoro();</exit>
+      <state_glyph node="47,36,12,12">
+       <exit box="1,2,11,5"/>
+      </state_glyph>
      </state>
-     <state_glyph node="37,3,31,47"/>
+     <state_glyph node="37,1,31,51">
+      <exit box="1,2,14,4"/>
+     </state_glyph>
     </state>
     <state_diagram size="76,56"/>
    </statechart>
@@ -102,6 +108,8 @@ $define${AOs::Pomodoro}</text>
 /* a very simple Board Support Package (BSP) -------------------------------*/
 enum { BSP_TICKS_PER_SEC = 100 }; /* number of clock ticks in a second */
 void BSP_init(void);
+void BSP_stopTimer(void);
+void BSP_incrementPomodoro(void);
 
 /* define the event signals used in the application ------------------------*/
 enum PomodoroSignals {
@@ -133,6 +141,10 @@ void BSP_init(void)   {
            &quot;Press Ctrl-C to quit...\n&quot;,
            QP_VERSION_STR);
 }
+
+void BSP_stopTimer(void) {}
+
+void BSP_incrementPomodoro(void) {}
 
 /* callback functions needed by the framework ------------------------------*/
 void QF_onStartup(void) {}

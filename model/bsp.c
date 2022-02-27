@@ -29,6 +29,10 @@ void BSP_init(void)   {
            QP_VERSION_STR);
 }
 
+void BSP_stopTimer(void) {}
+
+void BSP_incrementPomodoro(void) {}
+
 /* callback functions needed by the framework ------------------------------*/
 void QF_onStartup(void) {}
 void QF_onCleanup(void) {}
