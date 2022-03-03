@@ -3,6 +3,8 @@ Pomodoro Timer
 
 A desktop pomodoro timer.
 
+![A rendered view of the case](mechanical/case.png)
+
 Peripherals
 -----------
 
