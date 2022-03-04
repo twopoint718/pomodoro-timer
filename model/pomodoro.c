@@ -50,6 +50,10 @@ QActive * const AO_Pomodoro = &l_pomodoro.super;
 #error qpc version 6.9.0 or higher required
 #endif
 /*.$endskip${QP_VERSION} ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
+/*.$define${AOs::num_poms} vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv*/
+/*.${AOs::num_poms} ........................................................*/
+static uint32_t num_poms = 0;
+/*.$enddef${AOs::num_poms} ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 /*.$define${AOs::Pomodoro_ctor} vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv*/
 /*.${AOs::Pomodoro_ctor} ...................................................*/
 void Pomodoro_ctor(void) {
@@ -64,7 +68,8 @@ void Pomodoro_ctor(void) {
 static QState Pomodoro_initial(Pomodoro * const me, void const * const par) {
     /*.${AOs::Pomodoro::SM::initial} */
     QTimeEvt_armX(&me->timeEvt, BSP_TICKS_PER_SEC/2,
-                 BSP_TICKS_PER_SEC/2);
+                  BSP_TICKS_PER_SEC/2);
+    (void)par; /* unused parameter */
     return Q_TRAN(&Pomodoro_show_stats);
 }
 /*.${AOs::Pomodoro::SM::show_stats} ........................................*/
@@ -141,10 +146,10 @@ static QState Pomodoro_long_break(Pomodoro * const me, QEvt const * const e) {
 static QState Pomodoro_pomodoro(Pomodoro * const me, QEvt const * const e) {
     QState status_;
     switch (e->sig) {
-        /*.${AOs::Pomodoro::SM::timing::pomodoro} */
-        case Q_EXIT_SIG: {
-            BSP_incrementPomodoro();
-            status_ = Q_HANDLED();
+        /*.${AOs::Pomodoro::SM::timing::pomodoro::TIMEOUT} */
+        case TIMEOUT_SIG: {
+            num_poms++;
+            status_ = Q_TRAN(&Pomodoro_show_stats);
             break;
         }
         default: {

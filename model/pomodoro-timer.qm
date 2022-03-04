@@ -15,9 +15,10 @@
     <!--${AOs::Pomodoro::SM::initial}-->
     <initial target="../1">
      <action brief="arm time event">QTimeEvt_armX(&amp;me-&gt;timeEvt, BSP_TICKS_PER_SEC/2,
-             BSP_TICKS_PER_SEC/2);</action>
+              BSP_TICKS_PER_SEC/2);
+(void)par; /* unused parameter */</action>
      <initial_glyph conn="2,6,5,0,5,4">
-      <action box="0,-4,13,3"/>
+      <action box="0,-2,13,3"/>
      </initial_glyph>
     </initial>
     <!--${AOs::Pomodoro::SM::show_stats}-->
@@ -37,8 +38,8 @@
      </tran>
      <!--${AOs::Pomodoro::SM::show_stats::ORIENT_P}-->
      <tran trig="ORIENT_P" target="../../2/3">
-      <tran_glyph conn="8,23,2,3,19,39">
-       <action box="9,17,10,2"/>
+      <tran_glyph conn="8,23,2,3,16,39">
+       <action box="9,14,10,2"/>
       </tran_glyph>
      </tran>
      <state_glyph node="3,10,13,13"/>
@@ -48,8 +49,8 @@
      <exit brief="stop timer">BSP_stopTimer();</exit>
      <!--${AOs::Pomodoro::SM::timing::TIMEOUT}-->
      <tran trig="TIMEOUT" target="../../1">
-      <tran_glyph conn="37,8,3,0,-24,2">
-       <action box="-14,-2,10,2"/>
+      <tran_glyph conn="37,8,3,0,-26,2">
+       <action box="-20,-2,10,2"/>
       </tran_glyph>
      </tran>
      <!--${AOs::Pomodoro::SM::timing::short_break}-->
@@ -62,10 +63,14 @@
      </state>
      <!--${AOs::Pomodoro::SM::timing::pomodoro}-->
      <state name="pomodoro">
-      <exit brief="num_poms++">BSP_incrementPomodoro();</exit>
-      <state_glyph node="47,36,12,12">
-       <exit box="1,2,11,5"/>
-      </state_glyph>
+      <!--${AOs::Pomodoro::SM::timing::pomodoro::TIMEOUT}-->
+      <tran trig="TIMEOUT" target="../../../1">
+       <action>num_poms++;</action>
+       <tran_glyph conn="47,45,3,2,-42,-22">
+        <action box="-30,-4,17,4"/>
+       </tran_glyph>
+      </tran>
+      <state_glyph node="47,36,12,12"/>
      </state>
      <state_glyph node="37,1,31,51">
       <exit box="1,2,14,4"/>
@@ -74,6 +79,11 @@
     <state_diagram size="76,56"/>
    </statechart>
   </class>
+  <!--${AOs::num_poms}-->
+  <attribute name="num_poms" type="uint32_t" visibility="0x02" properties="0x00">
+   <documentation>Number of pomodoros</documentation>
+   <code>= 0;</code>
+  </attribute>
   <!--${AOs::Pomodoro_ctor}-->
   <operation name="Pomodoro_ctor" type="void" visibility="0x00" properties="0x01">
    <documentation>The Pomodoro &quot;constructor&quot; is provided outside of the Pomodoro class, so that it can be used independently from the class. This is part of the &quot;opaque pointer&quot; design idiom.</documentation>
@@ -97,6 +107,7 @@ static Pomodoro l_pomodoro;
 QActive * const AO_Pomodoro = &amp;l_pomodoro.super;
 
 /* ask QM to define the Pomodoro class -------------------------------------*/
+$define${AOs::num_poms}
 $define${AOs::Pomodoro_ctor}
 $define${AOs::Pomodoro}</text>
   </file>
