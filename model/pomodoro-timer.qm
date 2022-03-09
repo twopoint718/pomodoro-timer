@@ -280,7 +280,7 @@ else
 # - the single-threaded QP/C port (win32-qv) or
 # - the multithreaded QP/C port (win32).
 #
-QP_PORT_DIR := $(QPC)/ports/posix-qv
+QP_PORT_DIR := $(QPC)/ports/arm-cm/qk/gnu
 #QP_PORT_DIR := $(QPC)/ports/posix
 
 C_SRCS += \
@@ -323,9 +323,9 @@ INCLUDES += -I$(QPC)/include -I$(QPC)/src -I$(QP_PORT_DIR)
 #     http://sourceforge.net/projects/qpc/files/QTools/
 # It is assumed that %QTOOLS%\bin directory is added to the PATH
 #
-CC    := gcc
-CPP   := g++
-LINK  := gcc    # for C programs
+CC    := arm-none-eabi-gcc
+CPP   := arm-none-eabi-g++
+LINK  := arm-none-eabi-gcc # for C programs
 #LINK  := g++   # for C++ programs
 
 #-----------------------------------------------------------------------------
@@ -380,6 +380,8 @@ BIN_DIR := build
 
 # gcc options:
 CFLAGS  = -c -g -O -std=c11 -pedantic -Wall -Wextra -W -Wno-c11-extensions \
+    -mcpu=cortex-m4 -ffunction-sections -fdata-sections -fstack-usage \
+    -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb --specs=nano.specs \
     $(INCLUDES) $(DEFINES)
 
 CPPFLAGS = -c -g -O -fno-pie -std=c++11 -pedantic -Wall -Wextra \

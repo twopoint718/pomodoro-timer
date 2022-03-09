@@ -155,7 +155,7 @@ int main(void)
           State = TIMING;
           break;
       case SHORT_BREAK:
-          ticks_remaining = 5;                  // set timer for 5 minutes
+          ticks_remaining = 300;                // set timer for 5 minutes
           LCD_clearDisplay();
           draw_string(0, 0, sbreak_lbl, sizeof(sbreak_lbl));
           HAL_TIM_Base_MspInit(&htim2);         // enable timer interrupt
