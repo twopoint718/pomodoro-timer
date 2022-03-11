@@ -8,3 +8,5 @@ docs
 model/build/*
 model/.pomodoro-timer
 build_rel
+.metadata
+Release
