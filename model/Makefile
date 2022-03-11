@@ -23,11 +23,18 @@ PROJECT := pomodoro
 # project directories:
 #
 
+# Base of project
+ROOT := $(HOME)/pomodoro-timer
+
 # list of all source directories used by this project
 VPATH := . \
 
 # list of all include directories needed by this project
 INCLUDES := -I. \
+	-I$(ROOT)/Core/Inc \
+	-I$(ROOT)/Drivers/STM32L4xx_HAL_Driver/Inc \
+	-I$(ROOT)/Drivers/CMSIS/Device/ST/STM32L4xx/Include \
+	-I$(ROOT)/Drivers/BSP/B-L475E-IOT01
 
 # location of the QP/C framework (if not provided in an env. variable)
 ifeq ($(QPC),)
