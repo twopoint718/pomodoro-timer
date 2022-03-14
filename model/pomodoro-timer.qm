@@ -203,11 +203,12 @@ ROOT := $(HOME)/pomodoro-timer
 VPATH := . \
 
 # list of all include directories needed by this project
-INCLUDES := -I. \
-    -I$(ROOT)/Core/Inc \
+INCLUDES := \
     -I$(ROOT)/Drivers/STM32L4xx_HAL_Driver/Inc \
     -I$(ROOT)/Drivers/CMSIS/Device/ST/STM32L4xx/Include \
-    -I$(ROOT)/Drivers/BSP/B-L475E-IOT01
+    -I$(ROOT)/Drivers/BSP/B-L475E-IOT01 \
+    -I$(ROOT)/Core/Inc \
+    -I.
 
 # location of the QP/C framework (if not provided in an env. variable)
 ifeq ($(QPC),)
@@ -222,7 +223,47 @@ endif
 C_SRCS := \
     pomodoro.c \
     bsp.c \
-    main.c
+    main.c \
+    $(ROOT)/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01.c \
+    $(ROOT)/Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01_accelero.c \
+    $(ROOT)/Drivers/BSP/Components/lsm6dsl/lsm6dsl.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_uart_ex.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_uart.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c \
+    $(ROOT)/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c \
+    $(ROOT)/Core/Src/bsp.c \
+    $(ROOT)/Core/Src/tim.c \
+    $(ROOT)/Core/Src/pcd8544.c \
+    $(ROOT)/Core/Src/spi.c \
+    $(ROOT)/Core/Src/gpio.c \
+    $(ROOT)/Core/Src/pomodoro.c \
+    $(ROOT)/Core/Src/syscalls.c \
+    $(ROOT)/Core/Src/i2c.c \
+    $(ROOT)/Core/Src/draw.c \
+    $(ROOT)/Core/Src/stm32l4xx_it.c \
+    $(ROOT)/Core/Src/main.c \
+    $(ROOT)/Core/Src/glcdfont.c \
+    $(ROOT)/Core/Src/usart.c \
+    $(ROOT)/Core/Src/stm32l4xx_hal_msp.c \
+    $(ROOT)/Core/Src/sysmem.c \
+    $(ROOT)/Core/Src/system_stm32l4xx.c
 
 # C++ source files...
 CPP_SRCS :=
