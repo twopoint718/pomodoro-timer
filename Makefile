@@ -1,7 +1,6 @@
 CC := arm-none-eabi-gcc
 LINK := arm-none-eabi-gcc
 C_SRCS := $(shell find Core Drivers model -name '*.c' -exec basename {} \;)
-C_OBJS := $(patsubst %.c,%.o,$(C_SRCS))
 BIN_DIR := build
 PROJECT := pomodoro
 
@@ -38,14 +37,7 @@ C_SRCS += \
 	qf_qeq.c \
 	qf_qmact.c \
 	qf_time.c \
-#	qf_port.c
-
-QS_SRCS := \
-	qs.c \
-	qs_64bit.c \
-	qs_rx.c \
-	qs_fp.c \
-	qs_port.c
+	qk_port.c
 
 # Typically you should not need to change these lines
 VPATH    += \
@@ -59,7 +51,9 @@ VPATH    += \
 
 INC += -I$(QPC)/include -I$(QPC)/src -I$(QP_PORT_DIR)
 
+
 C_OBJS       := $(patsubst %.c,%.o,$(C_SRCS))
+C_OBJS       += startup_stm32l475vgtx.o # Add startup file
 TARGET_EXE   := $(BIN_DIR)/$(PROJECT)
 C_OBJS_EXT   := $(addprefix $(BIN_DIR)/, $(C_OBJS))
 C_DEPS_EXT   := $(patsubst %.o,%.d, $(C_OBJS_EXT))
@@ -76,7 +70,6 @@ CFLAGS := \
 	-Wall \
 	-Wextra \
 	-Wno-c11-extensions \
-	-c \
 	-fdata-sections \
 	-ffunction-sections \
 	-g3 \
@@ -88,17 +81,48 @@ CFLAGS := \
 	-std=gnu11 \
 	$(INC)
 
+ASMFLAGS := \
+	-mcpu=cortex-m4 \
+	-g3 \
+	-DDEBUG \
+	-c \
+	-x assembler-with-cpp \
+	--specs=nano.specs \
+	-mfpu=fpv4-sp-d16 \
+	-mfloat-abi=hard \
+	-mthumb
+
+LINKFLAGS := \
+	-mcpu=cortex-m4 \
+	-TSTM32L475VGTX_FLASH.ld \
+	--specs=nosys.specs \
+	-Wl,-Map="pomodoro-timer.map" \
+	-Wl,--gc-sections \
+	-static \
+	--specs=nano.specs \
+	-mfpu=fpv4-sp-d16 \
+	-mfloat-abi=hard \
+	-mthumb \
+	-Wl,--start-group \
+	-lc \
+	-lm \
+	-Wl,--end-group
+
 ################################################################################
 # RULES
 
 all: $(TARGET_EXE)
 
 $(TARGET_EXE) : $(C_OBJS_EXT)
-	$(CC) $(CFLAGS) $(QPC)/include/qstamp.c -o $(BIN_DIR)/qstamp.o
+	$(CC) $(CFLAGS) -c $(QPC)/include/qstamp.c -o $(BIN_DIR)/qstamp.o
 	$(LINK) $(LINKFLAGS) $(LIB_DIRS) -o $@ $^ $(BIN_DIR)/qstamp.o
 
+
+$(BIN_DIR)/startup_stm32l475vgtx.o : Core/Startup/startup_stm32l475vgtx.s
+	$(CC) $(ASMFLAGS) -c $< -o $@
+
 $(BIN_DIR)/%.o : %.c
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 .PHONY : clean show
 
