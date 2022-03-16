@@ -1,0 +1,34 @@
+{
+    "env": {
+        "myDefaultIncludePath": [
+            "${workspaceFolder}",
+            "${workspaceFolder}/include"
+        ],
+        "myCompilerPath": "/usr/local/bin/arm-none-eabi-gcc"
+    },
+    "configurations": [
+        {
+            "name": "Cortex-M",
+            "intelliSenseMode": "gcc-arm",
+            "includePath": [
+                "${myDefaultIncludePath}",
+                "/Users/cjw/qp/qpc/include",
+                "/Users/cjw/qp/qpc/ports/arm-cm/qv/gnu"
+            ],
+            "compilerPath": "${myCompilerPath}",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "macFrameworkPath": [
+                "/System/Library/Frameworks",
+                "/Library/Frameworks"
+            ]
+        }
+    ],
+    "version": 4
+}

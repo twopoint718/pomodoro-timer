@@ -22,7 +22,7 @@ ifeq ($(QPC),)
 QPC := ../../..
 endif
 
-QP_PORT_DIR := $(QPC)/ports/arm-cm/qk/gnu
+QP_PORT_DIR := $(QPC)/ports/arm-cm/qv/gnu
 
 C_SRCS += \
 	qep_hsm.c \
