@@ -25,19 +25,19 @@ endif
 QP_PORT_DIR := $(QPC)/ports/arm-cm/qv/gnu
 
 C_SRCS += \
-	qep_hsm.c \
-	qep_msm.c \
-	qf_act.c \
-	qf_actq.c \
-	qf_defer.c \
-	qf_dyn.c \
-	qf_mem.c \
-	qf_ps.c \
-	qf_qact.c \
-	qf_qeq.c \
-	qf_qmact.c \
-	qf_time.c \
-	qk_port.c
+	# qep_hsm.c \
+	# qep_msm.c \
+	# qf_act.c \
+	# qf_actq.c \
+	# qf_defer.c \
+	# qf_dyn.c \
+	# qf_mem.c \
+	# qf_ps.c \
+	# qf_qact.c \
+	# qf_qeq.c \
+	# qf_qmact.c \
+	# qf_time.c \
+	# qk_port.c
 
 # Typically you should not need to change these lines
 VPATH    += \
@@ -49,7 +49,7 @@ VPATH    += \
 	Drivers/STM32L4xx_HAL_Driver/Src \
 	model
 
-INC += -I$(QPC)/include -I$(QPC)/src -I$(QP_PORT_DIR)
+INC += -I$(QPC)/include -I$(QP_PORT_DIR) #-I$(QPC)/src
 
 
 C_OBJS       := $(patsubst %.c,%.o,$(C_SRCS))
