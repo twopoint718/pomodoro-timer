@@ -1,0 +1,5 @@
+(fp_lib_table
+  (lib (name "Connector")(type "KiCad")(uri "/Users/cjw/Downloads/Connector.pretty")(options "")(descr "")(disabled))
+  (lib (name "TC2050-IDC")(type "KiCad")(uri "/Users/cjw/Downloads/TC2050-IDC")(options "")(descr ""))
+  (lib (name "SOICbite")(type "KiCad")(uri "/Users/cjw/code/SOICbite")(options "")(descr ""))
+)

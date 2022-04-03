@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name "MCU_Nordic")(type "Legacy")(uri "/Users/cjw/Downloads/MCU_Nordic/MCU_Nordic.lib")(options "")(descr ""))
+  (lib (name "TC2050-IDC")(type "Legacy")(uri "/Users/cjw/Downloads/TC2050-IDC/TC2050-IDC.lib")(options "")(descr ""))
+)

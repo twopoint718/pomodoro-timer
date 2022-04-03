@@ -13,3 +13,4 @@ Release
 build
 *.map
 .settings
+*.zip
