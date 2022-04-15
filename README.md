@@ -33,3 +33,8 @@ Then this project can be built by the Makefile in the root directory.
 ```
 make -j
 ```
+
+Presentations
+-------------
+
+- [8LU Keynote by Chris Wilson: Embedded–From the point of view of a web developer](https://www.meetup.com/8th-light-university/events/285065296/)
