@@ -37,4 +37,5 @@ make -j
 Presentations
 -------------
 
-- [8LU Keynote by Chris Wilson: Embedded–From the point of view of a web developer](https://www.meetup.com/8th-light-university/events/285065296/)
+- 8LU Keynote by Chris Wilson: Embedded–From the point of view of a web developer
+  [YouTube Link](https://youtube.com/playlist?list=PLJ8U_Ztr7xwWxTykN1e5mXYIPvEGNGG43)
