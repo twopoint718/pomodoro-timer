@@ -34,6 +34,11 @@ Then this project can be built by the Makefile in the root directory.
 make -j
 ```
 
+Building under Windows
+----------------------
+
+TODO
+
 Presentations
 -------------
 
