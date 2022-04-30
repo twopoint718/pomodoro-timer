@@ -43,4 +43,4 @@ Presentations
 -------------
 
 - 8LU Keynote by Chris Wilson: Embedded–From the point of view of a web developer
-  [YouTube Link](https://youtube.com/playlist?list=PLJ8U_Ztr7xwWxTykN1e5mXYIPvEGNGG43)
+  [YouTube Link](https://youtu.be/wSTIfWqJzPw)
